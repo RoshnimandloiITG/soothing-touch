@@ -1,0 +1,1581 @@
+{% comment %}
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  Contact Page — Fully Dynamic Shopify Section                    ║
+  ║  ─────────────────────────────────────────────────────────────  ║
+  ║  Blocks available:                                               ║
+  ║   • hero          — Full-width banner (icon, heading, image)     ║
+  ║   • send_message  — Left card: logo, title, desc, CTA button     ║
+  ║   • contact_info  — Right card: address + phone rows             ║
+  ║   • wholesale     — Right card: icon, heading, desc, link        ║
+  ║   • support_hours — Right card: hours table + note box           ║
+  ║   • help_strip    — Bottom 3-col icon + label + desc strip       ║
+  ║                                                                  ║
+  ║  All blocks are optional — hidden if empty, placeholder in       ║
+  ║  editor, fully responsive.                                       ║
+  ╚══════════════════════════════════════════════════════════════════╝
+{% endcomment %}
+
+{%- liquid
+  assign accent     = section.settings.accent_color
+  assign page_bg    = section.settings.page_bg_color
+  assign card_bg    = section.settings.card_bg_color
+  assign text_main  = section.settings.text_main_color
+  assign text_muted = section.settings.text_muted_color
+  assign btn_bg     = section.settings.btn_bg_color
+  assign btn_text   = section.settings.btn_text_color
+
+  assign has_hero         = false
+  assign has_send         = false
+  assign has_right_blocks = false
+  assign has_help_strip   = false
+
+  for block in section.blocks
+    case block.type
+      when 'hero'
+        assign has_hero = true
+      when 'send_message'
+        assign has_send = true
+      when 'contact_info'
+        assign has_right_blocks = true
+      when 'wholesale'
+        assign has_right_blocks = true
+      when 'support_hours'
+        assign has_right_blocks = true
+      when 'help_strip'
+        assign has_help_strip = true
+    endcase
+  endfor
+-%}
+
+<style>
+  #cp-{{ section.id }} {
+    --cp-accent:      {{ accent }};
+    --cp-page-bg:     {{ page_bg }};
+    --cp-card-bg:     {{ card_bg }};
+    --cp-text:        {{ text_main }};
+    --cp-muted:       {{ text_muted }};
+    --cp-btn-bg:      {{ btn_bg }};
+    --cp-btn-text:    {{ btn_text }};
+    --cp-border:      rgba(0,0,0,0.08);
+    --cp-icon-size:   22px;
+  }
+
+  /* ══════════════════════════════════
+     BASE
+  ══════════════════════════════════ */
+  #cp-{{ section.id }} {
+    background: var(--cp-page-bg);
+    color: var(--cp-text);
+    font-family: inherit;
+  }
+
+  /* ══════════════════════════════════
+     HERO BANNER
+  ══════════════════════════════════ */
+  .cp-hero {
+    position: relative;
+    width: 100%;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .cp-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .cp-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.48) 100%);
+    z-index: 1;
+  }
+  .cp-hero__placeholder {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #c97b5a 0%, #8b4a3a 100%);
+  }
+  .cp-hero__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .cp-hero__icon {
+    width: 56px; height: 56px;
+    color: #fff;
+    opacity: 0.95;
+  }
+  .cp-hero__icon img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+  .cp-hero__icon svg {
+    width: 100%; height: 100%;
+  }
+  .cp-hero__heading {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .cp-hero__sub {
+    font-size: clamp(14px, 1.8vw, 18px);
+    color: rgba(255,255,255,0.88);
+    margin: 0;
+    line-height: 1.5;
+    max-width: 480px;
+  }
+
+  /* ══════════════════════════════════
+     TWO-COL LAYOUT
+  ══════════════════════════════════ */
+  .cp-body {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  .cp-left, .cp-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ══════════════════════════════════
+     CARD BASE
+  ══════════════════════════════════ */
+  .cp-card {
+    background: var(--cp-card-bg);
+    border-radius: 18px;
+    border: 1px solid var(--cp-border);
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  }
+  .cp-card__inner {
+    padding: 28px 28px 32px;
+  }
+
+  /* Card section heading */
+  .cp-card__heading {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cp-accent);
+    margin: 0 0 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cp-card__heading svg {
+    width: 20px; height: 20px;
+    flex-shrink: 0;
+    color: var(--cp-accent);
+  }
+
+  /* ══════════════════════════════════
+     SEND MESSAGE CARD (left)
+  ══════════════════════════════════ */
+  .cp-send {
+    background: var(--cp-card-bg);
+    border-radius: 18px;
+    border: 1px solid var(--cp-border);
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  }
+  .cp-send__inner {
+    padding: 28px 28px 0;
+  }
+  .cp-send__heading {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cp-accent);
+    margin: 0 0 22px;
+  }
+
+  /* Logo + title area */
+  .cp-send__preview {
+    background: #f5ede8;
+    border-radius: 12px;
+    padding: 40px 24px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    margin-bottom: 0;
+  }
+  .cp-send__logo img {
+    max-width: 220px;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .cp-send__logo-text {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    color: var(--cp-accent);
+    letter-spacing: -0.02em;
+    font-family: serif;
+    line-height: 1;
+  }
+  .cp-send__title {
+    font-size: clamp(17px, 2.2vw, 22px);
+    font-weight: 700;
+    color: var(--cp-accent);
+    margin: 0;
+    line-height: 1.3;
+  }
+  .cp-send__desc {
+    font-size: 14px;
+    color: var(--cp-muted);
+    margin: 0;
+    line-height: 1.55;
+    max-width: 340px;
+  }
+
+  /* START button */
+  .cp-send__btn-wrap {
+    padding: 0;
+  }
+  .cp-send__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 18px 24px;
+    background: var(--cp-btn-bg);
+    color: var(--cp-btn-text);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 0 0 18px 18px;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+  }
+  .cp-send__btn:hover {
+    opacity: 0.9;
+    filter: brightness(1.08);
+  }
+  .cp-send__btn svg {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════
+     CONTACT INFO CARD
+  ══════════════════════════════════ */
+  .cp-info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .cp-info-row {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .cp-info-row__icon {
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+    color: var(--cp-accent);
+    margin-top: 1px;
+  }
+  .cp-info-row__body {}
+  .cp-info-row__label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cp-text);
+    margin: 0 0 5px;
+  }
+  .cp-info-row__content {
+    font-size: 14px;
+    color: var(--cp-muted);
+    line-height: 1.65;
+    margin: 0;
+    white-space: pre-line;
+  }
+  .cp-info-row__content a {
+    color: var(--cp-muted);
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+  .cp-info-row__content a:hover { color: var(--cp-accent); }
+  .cp-info-row__note {
+    font-size: 13px;
+    color: var(--cp-muted);
+    margin: 8px 0 0;
+    font-style: italic;
+  }
+
+  /* ══════════════════════════════════
+     WHOLESALE CARD
+  ══════════════════════════════════ */
+  .cp-wholesale__desc {
+    font-size: 14px;
+    color: var(--cp-muted);
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+  .cp-wholesale__link {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cp-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(0,0,0,0.3);
+    transition: color 0.18s;
+  }
+  .cp-wholesale__link:hover { color: var(--cp-accent); }
+
+  /* ══════════════════════════════════
+     SUPPORT HOURS CARD
+  ══════════════════════════════════ */
+  .cp-hours-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+  }
+  .cp-hours-table tr {
+    border-bottom: 1px solid var(--cp-border);
+  }
+  .cp-hours-table tr:last-child { border-bottom: none; }
+  .cp-hours-table td {
+    padding: 10px 0;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--cp-text);
+  }
+  .cp-hours-table td:first-child { font-weight: 600; }
+  .cp-hours-table td:last-child {
+    text-align: right;
+    color: var(--cp-muted);
+  }
+  .cp-hours-note {
+    background: #f5f5f5;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--cp-muted);
+    line-height: 1.55;
+    margin: 0;
+    border: 1px solid var(--cp-border);
+  }
+
+  /* ══════════════════════════════════
+     HELP STRIP (bottom)
+  ══════════════════════════════════ */
+  .cp-help {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 24px 72px;
+  }
+  .cp-help__header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .cp-help__heading {
+    font-size: clamp(22px, 3.5vw, 36px);
+    font-weight: 800;
+    color: var(--cp-accent);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+  }
+  .cp-help__sub {
+    font-size: clamp(13px, 1.5vw, 15px);
+    color: var(--cp-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .cp-help__cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--cp-border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .cp-help__col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 36px 24px;
+    gap: 12px;
+    border-right: 1px solid var(--cp-border);
+  }
+  .cp-help__col:last-child { border-right: none; }
+
+  .cp-help__icon {
+    width: 44px; height: 44px;
+    color: var(--cp-accent);
+  }
+  .cp-help__icon svg { width: 100%; height: 100%; }
+  .cp-help__col-label {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cp-accent);
+    margin: 0;
+  }
+  .cp-help__col-desc {
+    font-size: 13px;
+    color: var(--cp-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ══════════════════════════════════
+     EDITOR PLACEHOLDERS
+  ══════════════════════════════════ */
+  .cp-placeholder {
+    border: 2px dashed rgba(0,0,0,0.1);
+    border-radius: 14px;
+    padding: 28px 20px;
+    text-align: center;
+    color: rgba(0,0,0,0.28);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .cp-placeholder svg { width: 28px; height: 28px; opacity: 0.35; }
+
+  /* ══════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════ */
+  @media (max-width: 900px) {
+    .cp-body {
+      grid-template-columns: 1fr;
+      padding: 32px 16px 48px;
+      gap: 20px;
+    }
+    .cp-help__cols {
+      grid-template-columns: 1fr;
+    }
+    .cp-help__col {
+      border-right: none;
+      border-bottom: 1px solid var(--cp-border);
+      padding: 28px 20px;
+    }
+    .cp-help__col:last-child { border-bottom: none; }
+    .cp-help { padding: 0 16px 48px; }
+  }
+
+  @media (max-width: 600px) {
+    .cp-hero { min-height: 240px; }
+    .cp-hero__content { padding: 44px 16px; }
+    .cp-card__inner { padding: 20px 18px 24px; }
+    .cp-send__inner { padding: 20px 18px 0; }
+    .cp-send__preview { padding: 28px 16px 24px; gap: 10px; }
+    .cp-help__heading { font-size: clamp(20px, 6vw, 28px); }
+  }
+
+  /* hide section padding for contact page */
+  .shopify-design-mode .cp-placeholder { display: flex !important; }
+</style>
+
+<div id="cp-{{ section.id }}">
+
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+
+      {%- comment -%}═══════════════════════════
+        HERO BLOCK
+      ═══════════════════════════{%- endcomment -%}
+      {%- when 'hero' -%}
+        <div class="cp-hero" {{ block.shopify_attributes }}>
+          {%- if block.settings.bg_image != blank -%}
+            <img
+              class="cp-hero__bg"
+              src="{{ block.settings.bg_image | img_url: '1600x', crop: 'center' }}"
+              srcset="
+                {{ block.settings.bg_image | img_url: '800x',  crop: 'center' }} 800w,
+                {{ block.settings.bg_image | img_url: '1200x', crop: 'center' }} 1200w,
+                {{ block.settings.bg_image | img_url: '1600x', crop: 'center' }} 1600w
+              "
+              sizes="100vw"
+              alt="{{ block.settings.bg_image.alt | default: block.settings.heading | escape }}"
+              loading="eager"
+            >
+          {%- else -%}
+            <div class="cp-hero__placeholder"></div>
+          {%- endif -%}
+          <div class="cp-hero__overlay"></div>
+          <div class="cp-hero__content">
+            {%- comment -%} Icon {%- endcomment -%}
+            <div class="cp-hero__icon">
+              {%- if block.settings.icon_image != blank -%}
+                <img
+                  src="{{ block.settings.icon_image | img_url: '120x120' }}"
+                  alt=""
+                  loading="lazy"
+                >
+              {%- else -%}
+                {%- comment -%} Default handshake SVG {%- endcomment -%}
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 40l-8-8 4-4 8 4 8-8 8 4 6-6 4 4-14 14-8-4z"/>
+                  <path d="M44 20l-8 8M26 26l-6 6"/>
+                  <path d="M8 36c-2-2-2-5 0-7l16-16c2-2 5-2 7 0l4 4-16 16-6 4-5-1z"/>
+                  <path d="M56 28c2 2 2 5 0 7L40 51c-2 2-5 2-7 0l-4-4 16-16 6-4 5 1z"/>
+                </svg>
+              {%- endif -%}
+            </div>
+
+            {%- if block.settings.heading != blank -%}
+              <h1 class="cp-hero__heading">{{ block.settings.heading }}</h1>
+            {%- else -%}
+              <h1 class="cp-hero__heading">We're Here To Help</h1>
+            {%- endif -%}
+
+            {%- if block.settings.subheading != blank -%}
+              <p class="cp-hero__sub">{{ block.settings.subheading }}</p>
+            {%- endif -%}
+          </div>
+        </div>
+
+    {%- endcase -%}
+  {%- endfor -%}
+
+  {%- comment -%}════════════════════════════════════
+    TWO-COLUMN BODY
+  ════════════════════════════════════{%- endcomment -%}
+  {%- if has_send or has_right_blocks -%}
+    <div class="cp-body">
+
+      {%- comment -%} LEFT COLUMN {%- endcomment -%}
+      <div class="cp-left">
+        {%- assign found_send = false -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'send_message' -%}
+            {%- assign found_send = true -%}
+            <div class="cp-send" {{ block.shopify_attributes }}>
+              <div class="cp-send__inner">
+                <p class="cp-send__heading">
+                  {{ block.settings.heading | default: 'Send Us A Message' }}
+                </p>
+              </div>
+
+              <div class="cp-send__preview">
+                {%- comment -%} Logo or brand text {%- endcomment -%}
+                {%- if block.settings.logo != blank -%}
+                  <div class="cp-send__logo">
+                    <img
+                      src="{{ block.settings.logo | img_url: '500x', crop: 'center' }}"
+                      alt="{{ block.settings.logo.alt | default: shop.name | escape }}"
+                      loading="lazy"
+                    >
+                  </div>
+                {%- elsif block.settings.brand_text != blank -%}
+                  <p class="cp-send__logo-text">{{ block.settings.brand_text }}</p>
+                {%- else -%}
+                  <p class="cp-send__logo-text">{{ shop.name }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.card_title != blank -%}
+                  <h2 class="cp-send__title">{{ block.settings.card_title }}</h2>
+                {%- endif -%}
+
+                {%- if block.settings.card_desc != blank -%}
+                  <p class="cp-send__desc">{{ block.settings.card_desc }}</p>
+                {%- endif -%}
+              </div>
+
+              {%- comment -%} START button {%- endcomment -%}
+              <div class="cp-send__btn-wrap">
+                <a
+                  href="{{ block.settings.btn_url | default: '#contact-form' }}"
+                  class="cp-send__btn"
+                >
+                  {{ block.settings.btn_label | default: 'START' }}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- comment -%} Placeholder in editor if no send_message block {%- endcomment -%}
+        {%- unless found_send -%}
+          {%- if request.design_mode -%}
+            <div class="cp-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <span>Add a "Send Message" block</span>
+            </div>
+          {%- endif -%}
+        {%- endunless -%}
+      </div>
+
+      {%- comment -%} RIGHT COLUMN {%- endcomment -%}
+      <div class="cp-right">
+        {%- assign found_right = false -%}
+        {%- for block in section.blocks -%}
+
+          {%- comment -%}── Contact Info ──{%- endcomment -%}
+          {%- if block.type == 'contact_info' -%}
+            {%- assign found_right = true -%}
+            <div class="cp-card" {{ block.shopify_attributes }}>
+              <div class="cp-card__inner">
+                <h3 class="cp-card__heading">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  {{ block.settings.heading | default: 'Contact Information' }}
+                </h3>
+
+                <div class="cp-info-rows">
+
+                  {%- comment -%} Address {%- endcomment -%}
+                  {%- if block.settings.address != blank -%}
+                    <div class="cp-info-row">
+                      <svg class="cp-info-row__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/>
+                      </svg>
+                      <div class="cp-info-row__body">
+                        <p class="cp-info-row__label">{{ block.settings.address_label | default: 'Address' }}</p>
+                        <p class="cp-info-row__content">{{ block.settings.address }}</p>
+                        {%- if block.settings.address_note != blank -%}
+                          <p class="cp-info-row__note">{{ block.settings.address_note }}</p>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
+
+                  {%- comment -%} Phone {%- endcomment -%}
+                  {%- if block.settings.phone_content != blank -%}
+                    <div class="cp-info-row">
+                      <svg class="cp-info-row__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/>
+                      </svg>
+                      <div class="cp-info-row__body">
+                        <p class="cp-info-row__label">{{ block.settings.phone_label | default: 'Phone' }}</p>
+                        <p class="cp-info-row__content">{{ block.settings.phone_content }}</p>
+                      </div>
+                    </div>
+                  {%- endif -%}
+
+                  {%- comment -%} Email {%- endcomment -%}
+                  {%- if block.settings.email != blank -%}
+                    <div class="cp-info-row">
+                      <svg class="cp-info-row__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/>
+                      </svg>
+                      <div class="cp-info-row__body">
+                        <p class="cp-info-row__label">{{ block.settings.email_label | default: 'Email' }}</p>
+                        <p class="cp-info-row__content"><a href="mailto:{{ block.settings.email }}">{{ block.settings.email }}</a></p>
+                      </div>
+                    </div>
+                  {%- endif -%}
+
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%}── Wholesale ──{%- endcomment -%}
+          {%- if block.type == 'wholesale' -%}
+            {%- assign found_right = true -%}
+            <div class="cp-card" {{ block.shopify_attributes }}>
+              <div class="cp-card__inner">
+                <h3 class="cp-card__heading">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+                  {{ block.settings.heading | default: 'Wholesale Opportunities' }}
+                </h3>
+                {%- if block.settings.description != blank -%}
+                  <p class="cp-wholesale__desc">{{ block.settings.description }}</p>
+                {%- endif -%}
+                {%- if block.settings.link_label != blank and block.settings.link_url != blank -%}
+                  <a href="{{ block.settings.link_url }}" class="cp-wholesale__link">
+                    {{ block.settings.link_label }}
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%}── Support Hours ──{%- endcomment -%}
+          {%- if block.type == 'support_hours' -%}
+            {%- assign found_right = true -%}
+            <div class="cp-card" {{ block.shopify_attributes }}>
+              <div class="cp-card__inner">
+                <h3 class="cp-card__heading">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  {{ block.settings.heading | default: 'Support Hours' }}
+                </h3>
+
+                <table class="cp-hours-table">
+                  <tbody>
+                    {%- if block.settings.row1_days != blank -%}
+                      <tr>
+                        <td>{{ block.settings.row1_days }}</td>
+                        <td>{{ block.settings.row1_hours }}</td>
+                      </tr>
+                    {%- endif -%}
+                    {%- if block.settings.row2_days != blank -%}
+                      <tr>
+                        <td>{{ block.settings.row2_days }}</td>
+                        <td>{{ block.settings.row2_hours }}</td>
+                      </tr>
+                    {%- endif -%}
+                    {%- if block.settings.row3_days != blank -%}
+                      <tr>
+                        <td>{{ block.settings.row3_days }}</td>
+                        <td>{{ block.settings.row3_hours }}</td>
+                      </tr>
+                    {%- endif -%}
+                    {%- if block.settings.row4_days != blank -%}
+                      <tr>
+                        <td>{{ block.settings.row4_days }}</td>
+                        <td>{{ block.settings.row4_hours }}</td>
+                      </tr>
+                    {%- endif -%}
+                  </tbody>
+                </table>
+
+                {%- if block.settings.note != blank -%}
+                  <p class="cp-hours-note">{{ block.settings.note }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+        {%- endfor -%}
+
+        {%- comment -%} Placeholder in editor if no right blocks {%- endcomment -%}
+        {%- unless found_right -%}
+          {%- if request.design_mode -%}
+            <div class="cp-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              <span>Add info blocks (Contact Info, Wholesale, Support Hours)</span>
+            </div>
+          {%- endif -%}
+        {%- endunless -%}
+      </div>
+
+    </div>
+  {%- endif -%}
+
+  {%- comment -%}════════════════════════════════════
+    HELP STRIP (bottom)
+  ════════════════════════════════════{%- endcomment -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'help_strip' -%}
+      <div class="cp-help" {{ block.shopify_attributes }}>
+        <div class="cp-help__header">
+          {%- if block.settings.heading != blank -%}
+            <h2 class="cp-help__heading">
+              {{ block.settings.heading }}{%- if block.settings.heading_suffix != blank -%}<span style="font-weight:400;">{{ block.settings.heading_suffix }}</span>{%- endif -%}
+            </h2>
+          {%- endif -%}
+          {%- if block.settings.subheading != blank -%}
+            <p class="cp-help__sub">{{ block.settings.subheading }}</p>
+          {%- endif -%}
+        </div>
+
+        <div class="cp-help__cols">
+
+          {%- comment -%} Column 1 {%- endcomment -%}
+          {%- if block.settings.col1_label != blank -%}
+            <div class="cp-help__col">
+              <div class="cp-help__icon">
+                {%- if block.settings.col1_icon == 'box' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {%- elsif block.settings.col1_icon == 'phone' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.128.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45c.907.339 1.85.572 2.81.7A2 2 0 0122 16.92z"/></svg>
+                {%- elsif block.settings.col1_icon == 'bag' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                {%- elsif block.settings.col1_icon == 'mail' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+                {%- else -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {%- endif -%}
+              </div>
+              <p class="cp-help__col-label">{{ block.settings.col1_label }}</p>
+              {%- if block.settings.col1_desc != blank -%}
+                <p class="cp-help__col-desc">{{ block.settings.col1_desc }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Column 2 {%- endcomment -%}
+          {%- if block.settings.col2_label != blank -%}
+            <div class="cp-help__col">
+              <div class="cp-help__icon">
+                {%- if block.settings.col2_icon == 'phone' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.128.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45c.907.339 1.85.572 2.81.7A2 2 0 0122 16.92z"/></svg>
+                {%- elsif block.settings.col2_icon == 'box' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {%- elsif block.settings.col2_icon == 'bag' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                {%- elsif block.settings.col2_icon == 'mail' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+                {%- else -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.128.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45c.907.339 1.85.572 2.81.7A2 2 0 0122 16.92z"/></svg>
+                {%- endif -%}
+              </div>
+              <p class="cp-help__col-label">{{ block.settings.col2_label }}</p>
+              {%- if block.settings.col2_desc != blank -%}
+                <p class="cp-help__col-desc">{{ block.settings.col2_desc }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Column 3 {%- endcomment -%}
+          {%- if block.settings.col3_label != blank -%}
+            <div class="cp-help__col">
+              <div class="cp-help__icon">
+                {%- if block.settings.col3_icon == 'bag' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                {%- elsif block.settings.col3_icon == 'phone' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.128.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45c.907.339 1.85.572 2.81.7A2 2 0 0122 16.92z"/></svg>
+                {%- elsif block.settings.col3_icon == 'box' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {%- elsif block.settings.col3_icon == 'mail' -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+                {%- else -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                {%- endif -%}
+              </div>
+              <p class="cp-help__col-label">{{ block.settings.col3_label }}</p>
+              {%- if block.settings.col3_desc != blank -%}
+                <p class="cp-help__col-desc">{{ block.settings.col3_desc }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+
+</div>
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "tag": "section",
+  "class": "contact-page-section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent / heading color",
+      "default": "#b84c3a"
+    },
+    {
+      "type": "color",
+      "id": "page_bg_color",
+      "label": "Page background",
+      "default": "#fdf6f3"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_main_color",
+      "label": "Main text color",
+      "default": "#2c1a14"
+    },
+    {
+      "type": "color",
+      "id": "text_muted_color",
+      "label": "Muted / secondary text",
+      "default": "#6b4c42"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "START button background",
+      "default": "#b84c3a"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "START button text",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hero",
+      "name": "Hero Banner",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "bg_image",
+          "label": "Background image",
+          "info": "Recommended: 1600 × 600 px landscape"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon image (optional)",
+          "info": "White/light PNG icon. Leave blank for default handshake icon."
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "We're Here To Help"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Your satisfaction is important to us!"
+        }
+      ]
+    },
+    {
+      "type": "send_message",
+      "name": "Send Message Card",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Card section label",
+          "default": "Send Us A Message"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Brand logo",
+          "info": "Shown inside the card preview area. Leave blank to use brand text."
+        },
+        {
+          "type": "text",
+          "id": "brand_text",
+          "label": "Brand name (if no logo)",
+          "default": "Your Store"
+        },
+        {
+          "type": "text",
+          "id": "card_title",
+          "label": "Card title",
+          "default": "Help & Support Request"
+        },
+        {
+          "type": "textarea",
+          "id": "card_desc",
+          "label": "Card description",
+          "default": "We're here to help! Please click start below to begin your support request."
+        },
+        {
+          "type": "text",
+          "id": "btn_label",
+          "label": "Button label",
+          "default": "START"
+        },
+        {
+          "type": "url",
+          "id": "btn_url",
+          "label": "Button link",
+          "info": "Link to your helpdesk, Gorgias, or contact form."
+        }
+      ]
+    },
+    {
+      "type": "contact_info",
+      "name": "Contact Information",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Card heading",
+          "default": "Contact Information"
+        },
+        {
+          "type": "text",
+          "id": "address_label",
+          "label": "Address label",
+          "default": "Address"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "Address",
+          "placeholder": "Company Name\n123 Street\nCity, State ZIP\nCountry"
+        },
+        {
+          "type": "text",
+          "id": "address_note",
+          "label": "Address note (italic)",
+          "placeholder": "(Please note that our production facility is not open to the public)"
+        },
+        {
+          "type": "text",
+          "id": "phone_label",
+          "label": "Phone label",
+          "default": "Phone"
+        },
+        {
+          "type": "textarea",
+          "id": "phone_content",
+          "label": "Phone content",
+          "placeholder": "Toll Free: 800-000-0000\nLocal: (555) 000-0000",
+          "info": "Use line breaks for multiple numbers."
+        },
+        {
+          "type": "text",
+          "id": "email_label",
+          "label": "Email label",
+          "default": "Email"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "Email address",
+          "placeholder": "hello@yourstore.com"
+        }
+      ]
+    },
+    {
+      "type": "wholesale",
+      "name": "Wholesale Opportunities",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Card heading",
+          "default": "Wholesale Opportunities"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Are you interested in becoming a wholesale distributor for our products?\n\nWe offer competitive wholesale pricing and support for qualified retailers, spas, and wellness centers."
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "Fill out your application here"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL"
+        }
+      ]
+    },
+    {
+      "type": "support_hours",
+      "name": "Support Hours",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Card heading",
+          "default": "Support Hours"
+        },
+        {
+          "type": "text",
+          "id": "row1_days",
+          "label": "Row 1 – Days",
+          "default": "Monday – Friday"
+        },
+        {
+          "type": "text",
+          "id": "row1_hours",
+          "label": "Row 1 – Hours",
+          "default": "8:00 AM – 4:00 PM MST"
+        },
+        {
+          "type": "text",
+          "id": "row2_days",
+          "label": "Row 2 – Days",
+          "default": "Saturday – Sunday"
+        },
+        {
+          "type": "text",
+          "id": "row2_hours",
+          "label": "Row 2 – Hours",
+          "default": "Closed"
+        },
+        {
+          "type": "text",
+          "id": "row3_days",
+          "label": "Row 3 – Days (optional)"
+        },
+        {
+          "type": "text",
+          "id": "row3_hours",
+          "label": "Row 3 – Hours (optional)"
+        },
+        {
+          "type": "text",
+          "id": "row4_days",
+          "label": "Row 4 – Days (optional)"
+        },
+        {
+          "type": "text",
+          "id": "row4_hours",
+          "label": "Row 4 – Hours (optional)"
+        },
+        {
+          "type": "textarea",
+          "id": "note",
+          "label": "Note box (below hours)",
+          "default": "Email Support: We monitor emails 24/7 and respond even outside business hours for urgent issues."
+        }
+      ]
+    },
+    {
+      "type": "help_strip",
+      "name": "Need Help Strip",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading (bold part)",
+          "default": "NEED HELP RIGHT NOW"
+        },
+        {
+          "type": "text",
+          "id": "heading_suffix",
+          "label": "Heading suffix (light weight)",
+          "default": "?"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Our intelligent virtual assistant can likely help you with any of your questions. Call: 800-000-0000"
+        },
+        {
+          "type": "header",
+          "content": "Column 1"
+        },
+        {
+          "type": "select",
+          "id": "col1_icon",
+          "label": "Icon",
+          "options": [
+            { "value": "box",   "label": "Box / Delivery" },
+            { "value": "phone", "label": "Phone"          },
+            { "value": "bag",   "label": "Shopping Bag"   },
+            { "value": "mail",  "label": "Mail / Email"   }
+          ],
+          "default": "box"
+        },
+        {
+          "type": "text",
+          "id": "col1_label",
+          "label": "Label",
+          "default": "QUICK QUESTIONS"
+        },
+        {
+          "type": "text",
+          "id": "col1_desc",
+          "label": "Description",
+          "default": "Product info, ingredients, usage"
+        },
+        {
+          "type": "header",
+          "content": "Column 2"
+        },
+        {
+          "type": "select",
+          "id": "col2_icon",
+          "label": "Icon",
+          "options": [
+            { "value": "phone", "label": "Phone"          },
+            { "value": "box",   "label": "Box / Delivery" },
+            { "value": "bag",   "label": "Shopping Bag"   },
+            { "value": "mail",  "label": "Mail / Email"   }
+          ],
+          "default": "phone"
+        },
+        {
+          "type": "text",
+          "id": "col2_label",
+          "label": "Label",
+          "default": "ORDER ISSUES"
+        },
+        {
+          "type": "text",
+          "id": "col2_desc",
+          "label": "Description",
+          "default": "Shipping, returns, order status"
+        },
+        {
+          "type": "header",
+          "content": "Column 3"
+        },
+        {
+          "type": "select",
+          "id": "col3_icon",
+          "label": "Icon",
+          "options": [
+            { "value": "bag",   "label": "Shopping Bag"   },
+            { "value": "box",   "label": "Box / Delivery" },
+            { "value": "phone", "label": "Phone"          },
+            { "value": "mail",  "label": "Mail / Email"   }
+          ],
+          "default": "bag"
+        },
+        {
+          "type": "text",
+          "id": "col3_label",
+          "label": "Label",
+          "default": "BUSINESS INQUIRIES"
+        },
+        {
+          "type": "text",
+          "id": "col3_desc",
+          "label": "Description",
+          "default": "Wholesale, partnerships, bulk orders"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Page",
+      "blocks": [
+        {
+          "type": "hero",
+          "settings": {
+            "heading": "We're Here To Help",
+            "subheading": "Your satisfaction is important to us!"
+          }
+        },
+        {
+          "type": "send_message",
+          "settings": {
+            "heading": "Send Us A Message",
+            "card_title": "Help & Support Request",
+            "card_desc": "We're here to help! Please click start below to begin your support request.",
+            "btn_label": "START"
+          }
+        },
+        {
+          "type": "contact_info",
+          "settings": {
+            "heading": "Contact Information",
+            "address": "Your Company\n123 Street\nCity, State ZIP\nUnited States",
+            "phone_content": "Toll Free: 800-000-0000\nLocal: (555) 000-0000"
+          }
+        },
+        {
+          "type": "wholesale",
+          "settings": {
+            "heading": "Wholesale Opportunities",
+            "description": "Are you interested in becoming a wholesale distributor?\n\nWe offer competitive wholesale pricing and support for qualified retailers.",
+            "link_label": "Fill out your application here"
+          }
+        },
+        {
+          "type": "support_hours",
+          "settings": {
+            "heading": "Support Hours",
+            "row1_days": "Monday – Friday",
+            "row1_hours": "8:00 AM – 4:00 PM MST",
+            "row2_days": "Saturday – Sunday",
+            "row2_hours": "Closed",
+            "note": "Email Support: We monitor emails 24/7 and respond even outside business hours for urgent issues."
+          }
+        },
+        {
+          "type": "help_strip",
+          "settings": {
+            "heading": "NEED HELP RIGHT NOW",
+            "heading_suffix": "?",
+            "col1_label": "QUICK QUESTIONS",
+            "col1_desc": "Product info, ingredients, usage",
+            "col2_label": "ORDER ISSUES",
+            "col2_desc": "Shipping, returns, order status",
+            "col3_label": "BUSINESS INQUIRIES",
+            "col3_desc": "Wholesale, partnerships, bulk orders"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="contact page-width page-width--narrow section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="title title-wrapper--no-top-margin inline-richtext {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {{ section.settings.heading }}
+      </h2>
+    {%- else -%}
+      <h2 class="visually-hidden">{{ 'templates.contact.form.title' | t }}</h2>
+    {%- endif -%}
+    {%- liquid
+      assign contact_form_class = 'isolate'
+      if settings.animations_reveal_on_scroll
+        assign contact_form_class = 'isolate scroll-trigger animate--slide-in'
+      endif
+    -%}
+    {%- form 'contact', id: 'ContactForm', class: contact_form_class -%}
+      {%- if form.posted_successfully? -%}
+        <h2 class="form-status form-status-list form__message" tabindex="-1" autofocus>
+          {{- 'icon-success.svg' | inline_asset_content -}}
+          {{ 'templates.contact.form.post_success' | t }}
+        </h2>
+      {%- elsif form.errors -%}
+        <div class="form__message">
+          <h2 class="form-status caption-large text-body" role="alert" tabindex="-1" autofocus>
+            {{- 'icon-error.svg' | inline_asset_content -}}
+            {{ 'templates.contact.form.error_heading' | t }}
+          </h2>
+        </div>
+        <ul class="form-status-list caption-large" role="list">
+          <li>
+            <a href="#ContactForm-email" class="link">
+              {{ form.errors.translated_fields.email | capitalize }}
+              {{ form.errors.messages.email }}
+            </a>
+          </li>
+        </ul>
+      {%- endif -%}
+      <div class="contact__fields">
+        <div class="field">
+          <input
+            class="field__input"
+            autocomplete="name"
+            type="text"
+            id="ContactForm-name"
+            name="contact[{{ 'templates.contact.form.name' | t }}]"
+            value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+            placeholder="{{ 'templates.contact.form.name' | t }}"
+          >
+          <label class="field__label" for="ContactForm-name">{{ 'templates.contact.form.name' | t }}</label>
+        </div>
+        <div class="field field--with-error">
+          <input
+            autocomplete="email"
+            type="email"
+            id="ContactForm-email"
+            class="field__input"
+            name="contact[email]"
+            spellcheck="false"
+            autocapitalize="off"
+            value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+            aria-required="true"
+            {% if form.errors contains 'email' %}
+              aria-invalid="true"
+              aria-describedby="ContactForm-email-error"
+            {% endif %}
+            placeholder="{{ 'templates.contact.form.email' | t }}"
+          >
+          <label class="field__label" for="ContactForm-email">
+            {{- 'templates.contact.form.email' | t }}
+            <span aria-hidden="true">*</span></label
+          >
+          {%- if form.errors contains 'email' -%}
+            <small class="contact__field-error" id="ContactForm-email-error">
+              <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+              <span class="form__message">
+                <span class="svg-wrapper">
+                  {{- 'icon-error.svg' | inline_asset_content -}}
+                </span>
+                {{- form.errors.translated_fields.email | capitalize }}
+                {{ form.errors.messages.email -}}
+              </span>
+            </small>
+          {%- endif -%}
+        </div>
+      </div>
+      <div class="field">
+        <input
+          type="tel"
+          id="ContactForm-phone"
+          class="field__input"
+          autocomplete="tel"
+          name="contact[{{ 'templates.contact.form.phone' | t }}]"
+          pattern="[0-9\-]*"
+          value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+          placeholder="{{ 'templates.contact.form.phone' | t }}"
+        >
+        <label class="field__label" for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
+      </div>
+      <div class="field">
+        <textarea
+          rows="10"
+          id="ContactForm-body"
+          class="text-area field__input"
+          name="contact[{{ 'templates.contact.form.comment' | t }}]"
+          placeholder="{{ 'templates.contact.form.comment' | t }}"
+        >
+          {{- form.body -}}
+        </textarea>
+        <label class="form__label field__label" for="ContactForm-body">
+          {{- 'templates.contact.form.comment' | t -}}
+        </label>
+      </div>
+      <div class="contact__button">
+        <button type="submit" class="button">
+          {{ 'templates.contact.form.send' | t }}
+        </button>
+      </div>
+    {%- endform -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.contact-form.name",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "t:sections.contact-form.settings.title.default",
+      "label": "t:sections.contact-form.settings.title.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        },
+        {
+          "value": "hxl",
+          "label": "t:sections.all.heading_size.options__4.label"
+        },
+        {
+          "value": "hxxl",
+          "label": "t:sections.all.heading_size.options__5.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact-form.presets.name"
+    }
+  ]
+}
+{% endschema %} {% endcomment %}

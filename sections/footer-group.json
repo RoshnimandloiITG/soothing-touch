@@ -1,0 +1,84 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "link_list_wcYAhh": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Quick Links",
+            "menu": "footer"
+          }
+        },
+        "link_list_jw8pVX": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Quick Links",
+            "menu": "footer"
+          }
+        },
+        "contact_3CPi8m": {
+          "type": "contact",
+          "settings": {
+            "heading": "Contact",
+            "contact_label": "Contact Customer Service",
+            "contact_email": "",
+            "address": "",
+            "phone": "",
+            "show_social_here": true,
+            "social_heading": "Stay Connected"
+          }
+        },
+        "newsletter_kY7Nta": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Join Our Glow Circle",
+            "description": "Get exclusive access to new products, wellness tips, and self-care rituals.",
+            "input_placeholder": "name@email.com",
+            "btn_label": "Subscribe"
+          }
+        }
+      },
+      "block_order": [
+        "link_list_wcYAhh",
+        "link_list_jw8pVX",
+        "contact_3CPi8m",
+        "newsletter_kY7Nta"
+      ],
+      "settings": {
+        "show_wave": true,
+        "wave_color": "#ffffff",
+        "footer_bg_color": "#ae473c",
+        "footer_text_color": "#ffffff",
+        "footer_muted_color": "#ffffffb8",
+        "link_hover_color": "#ffffff",
+        "input_bg_color": "#ffffff1f",
+        "btn_bg_color": "#ffffff",
+        "btn_text_color": "#b84c3a",
+        "brand_logo": "shopify://shop_images/yO33n9reMb3uemzG17X9hvGaHh0.webp",
+        "brand_logo_width": 600,
+        "brand_text": "Your Brand",
+        "brand_text_color": "#d4a87a",
+        "brand_font_style": "Georgia, serif",
+        "copyright_text": "All rights reserved.",
+        "show_policy": true,
+        "payment_enable": true,
+        "margin_top": 0
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

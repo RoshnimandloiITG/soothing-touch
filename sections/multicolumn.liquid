@@ -1,0 +1,755 @@
+{{ 'section-multicolumn.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  .title-wrapper-with-link {
+      justify-self:{{ section.settings.heading_alignment }}
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* ── Icon background bubble ── */
+  {%- if section.settings.icon_bg_enabled -%}
+  .section-{{ section.id }} .mc-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: {{ section.settings.icon_bg_size }}px;
+    height: {{ section.settings.icon_bg_size }}px;
+    border-radius: {{ section.settings.icon_bg_radius }}px;
+    background: {{ section.settings.icon_bg_color }};
+    margin-bottom: 16px;
+  }
+  {%- else -%}
+  .section-{{ section.id }} .mc-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  {%- endif -%}
+
+  /* ── SVG size only via CSS (color handled by JS below) ── */
+  .section-{{ section.id }} .mc-icon-wrap svg {
+    width: {{ section.settings.icon_size }}px !important;
+    height: {{ section.settings.icon_size }}px !important;
+    display: block !important;
+    flex-shrink: 0;
+  }
+
+  /* ── Card border (background_style = primary) ── */
+  {%- if section.settings.background_style == 'primary' and section.settings.card_border_enabled -%}
+  .section-{{ section.id }} .multicolumn-card {
+    border: {{ section.settings.card_border_width }}px solid {{ section.settings.card_border_color }};
+    border-radius: {{ section.settings.card_border_radius }}px;
+    overflow: hidden;
+  }
+  {%- endif -%}
+
+  /* ── Vertical dividers — DESKTOP ONLY ── */
+  {%- if section.settings.background_style == 'none' and section.settings.divider_enabled -%}
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }} .multicolumn-list .multicolumn-list__item + .multicolumn-list__item {
+      border-left: {{ section.settings.divider_width }}px solid {{ section.settings.divider_color }} !important;
+      padding-left: 20px !important;
+    }
+    
+  }
+  {%- endif -%}
+  /* Always hide divider on mobile regardless of setting */
+  @media screen and (max-width: 749px) {
+    .section-{{ section.id }} .multicolumn-list .multicolumn-list__item + .multicolumn-list__item {
+      border-left: 0 none !important;
+      padding-left: 0 !important;
+    }
+  }
+
+  /* ── Block heading font weight ── */
+  .section-{{ section.id }} .multicolumn-card__info h3 {
+    font-weight: {{ section.settings.heading_font_weight }};
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign columns_mobile_int = section.settings.columns_mobile | plus: 0
+  assign show_mobile_slider = false
+  if section.settings.swipe_on_mobile and section.blocks.size > columns_mobile_int
+    assign show_mobile_slider = true
+  endif
+-%}
+
+<div class="multicolumn section-{{ section.id }} color-{{ section.settings.color_scheme }} gradient{% unless section.settings.background_style == 'none' and settings.text_boxes_border_thickness > 0 or settings.text_boxes_shadow_opacity > 0 %} background-{{ section.settings.background_style }}{% endunless %}{% if section.settings.title == blank %} no-heading{% endif %}">
+  <div
+    class="page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+    {% if settings.animations_reveal_on_scroll %}
+      data-cascade
+    {% endif %}
+  >
+    {%- unless section.settings.title == blank -%}
+      <div class="title-wrapper-with-link title-wrapper--self-padded-mobile title-wrapper--no-top-margin multicolumn__title">
+        <h2 class=" title inline-richtext {{ section.settings.heading_size }}">
+          {{ section.settings.title }}
+        </h2>
+        {%- if section.settings.button_label != blank and show_mobile_slider -%}
+          <a href="{{ section.settings.button_link }}" class="link underlined-link large-up-hide">
+            {{- section.settings.button_label | escape -}}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endunless -%}
+
+    <slider-component class="slider-mobile-gutter">
+      <ul
+        class="multicolumn-list contains-content-container grid grid--{{ section.settings.columns_mobile }}-col-tablet-down grid--{{ section.settings.columns_desktop }}-col-desktop{% if show_mobile_slider %} slider slider--tablet grid--peek{% endif %}"
+        id="Slider-{{ section.id }}"
+        role="list"
+      >
+        {%- liquid
+          assign highest_ratio = 0
+          for block in section.blocks
+            if block.settings.image.aspect_ratio > highest_ratio
+              assign highest_ratio = block.settings.image.aspect_ratio
+            endif
+          endfor
+        -%}
+
+        {%- for block in section.blocks -%}
+          {%- assign empty_column = '' -%}
+          {%- assign block_icon_type = block.settings.icon_type | default: 'image' -%}
+          {%- if block.settings.image == blank
+            and block.settings.title == blank
+            and block.settings.text == blank
+            and block.settings.link_label == blank
+            and block.settings.svg_code == blank
+          -%}
+            {%- assign empty_column = ' multicolumn-list__item--empty' -%}
+          {%- endif -%}
+
+          <li
+            id="Slide-{{ section.id }}-{{ forloop.index }}"
+            class="multicolumn-list__item grid__item{% if section.settings.swipe_on_mobile %} slider__slide{% endif %}{% if section.settings.column_alignment == 'center' %} center{% endif %}{{ empty_column }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            {{ block.shopify_attributes }}
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+          >
+            <div class="multicolumn-card content-container">
+              {%- comment -%} ── ICON / IMAGE rendering ── {%- endcomment -%}
+              {%- if block_icon_type == 'svg' -%}
+                {%- if block.settings.svg_code != blank -%}
+                  {%- comment -%}
+                    We wrap the raw SVG in mc-icon-wrap so our CSS can target it.
+                    The SVG's own width/height attributes are overridden via CSS !important
+                    so the section-level icon_size always wins.
+                  {%- endcomment -%}
+                  <div class="multicolumn-card__image-wrapper{% if section.settings.image_width != 'full' %} multicolumn-card-spacing{% endif %}">
+                    <div class="mc-icon-wrap">
+                      {{ block.settings.svg_code }}
+                    </div>
+                  </div>
+                {%- else -%}
+                  <div class="multicolumn-card__image-wrapper{% if section.settings.image_width != 'full' %} multicolumn-card-spacing{% endif %}">
+                    <div class="mc-icon-wrap">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                      </svg>
+                    </div>
+                  </div>
+                {%- endif -%}
+
+              {%- elsif block.settings.image != blank -%}
+                {% if section.settings.image_ratio == 'adapt' or section.settings.image_ratio == 'circle' %}
+                  {% assign spaced_image = true %}
+                {% endif %}
+                <div class="multicolumn-card__image-wrapper multicolumn-card__image-wrapper--{{ section.settings.image_width }}-width{% if section.settings.image_width != 'full' or spaced_image %} multicolumn-card-spacing{% endif %}">
+                  <div
+                    class="media media--transparent media--{{ section.settings.image_ratio }}"
+                    {% if section.settings.image_ratio == 'adapt' %}
+                      style="padding-bottom: {{ 1 | divided_by: highest_ratio | times: 100 }}%;"
+                    {% endif %}
+                  >
+                    {%- liquid
+                      assign number_of_columns = section.settings.columns_desktop
+                      assign number_of_columns_mobile = section.settings.columns_mobile
+                      assign grid_space_desktop = number_of_columns | minus: 1 | times: settings.spacing_grid_horizontal | plus: 100 | append: 'px'
+                      assign grid_space_tablet = number_of_columns_mobile | minus: 1 | times: settings.spacing_grid_horizontal | plus: 100 | append: 'px'
+                      assign grid_space_mobile = number_of_columns_mobile | minus: 1 | times: settings.spacing_grid_horizontal | divided_by: 2 | plus: 30 | append: 'px'
+                      if section.settings.image_width == 'half'
+                        assign image_width = 0.5
+                      elsif section.settings.image_width == 'third'
+                        assign image_width = 0.33
+                      else
+                        assign image_width = 1
+                      endif
+                    -%}
+                    {% capture sizes %}
+                      (min-width: {{ settings.page_width }}px) calc(({{ settings.page_width }}px - {{ grid_space_desktop }}) * {{ image_width }} / {{ number_of_columns }}),
+                      (min-width: 990px) calc((100vw - {{ grid_space_desktop }}) * {{ image_width }} / {{ number_of_columns }}),
+                      (min-width: 750px) calc((100vw - {{ grid_space_tablet }}) * {{ image_width }} / {{ number_of_columns_mobile }}),
+                      calc((100vw - {{ grid_space_mobile }}) * {{ image_width }} / {{ number_of_columns_mobile }})
+                    {% endcapture %}
+                    {{
+                      block.settings.image
+                      | image_url: width: 3200
+                      | image_tag:
+                        widths: '50, 75, 100, 150, 200, 300, 400, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3200',
+                        sizes: sizes,
+                        class: 'multicolumn-card__image'
+                    }}
+                  </div>
+                </div>
+              {%- endif -%}
+
+              <div class="multicolumn-card__info">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="inline-richtext">{{ block.settings.title }}</h3>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="rte">{{ block.settings.text }}</div>
+                {%- endif -%}
+                {%- if block.settings.link_label != blank -%}
+                  <a
+                    class="link animate-arrow"
+                    {% if block.settings.link == blank %}
+                      role="link" aria-disabled="true"
+                    {% else %}
+                      href="{{ block.settings.link }}"
+                    {% endif %}
+                  >
+                    {{- block.settings.link_label | escape -}}
+                    <span class="svg-wrapper"
+                      ><span class="icon-wrap">&nbsp;{{ 'icon-arrow.svg' | inline_asset_content }}</span></span
+                    >
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if show_mobile_slider -%}
+        <div class="slider-buttons large-up-hide">
+          <button
+            type="button"
+            class="slider-button slider-button--prev"
+            name="previous"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+          >
+            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+          </button>
+          <div class="slider-counter caption">
+            <span class="slider-counter--current">1</span>
+            <span aria-hidden="true"> / </span>
+            <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+            <span class="slider-counter--total">{{ section.blocks.size }}</span>
+          </div>
+          <button
+            type="button"
+            class="slider-button slider-button--next"
+            name="next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+          >
+            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+          </button>
+        </div>
+      {%- endif -%}
+    </slider-component>
+
+    <div class="center{% if show_mobile_slider %} small-hide medium-hide{% endif %}">
+      {%- if section.settings.button_label != blank -%}
+        <a
+          class="button button--primary"
+          {% if section.settings.button_link == blank %}
+            role="link" aria-disabled="true"
+          {% else %}
+            href="{{ section.settings.button_link }}"
+          {% endif %}
+        >
+          {{ section.settings.button_label | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{%- if section.settings.icon_color_override -%}
+<script>
+(function() {
+  var iconColor = '{{ section.settings.icon_color }}';
+  var fillMode  = '{{ section.settings.icon_fill_mode }}';
+  var iconSize  = {{ section.settings.icon_size }};
+  var sectionEl = document.querySelector('.section-{{ section.id }}');
+  if (!sectionEl || !iconColor) return;
+
+  function applyIconColors() {
+    sectionEl.querySelectorAll('.mc-icon-wrap').forEach(function(wrap) {
+      var svg = wrap.querySelector('svg');
+      if (!svg) return;
+
+      /* 1. Kill any <style> blocks baked into the SVG */
+      svg.querySelectorAll('style').forEach(function(s) { s.remove(); });
+
+      /* 2. Strip fill/stroke attributes AND inline styles from every element */
+      [svg].concat(Array.from(svg.querySelectorAll('*'))).forEach(function(el) {
+        el.removeAttribute('fill');
+        el.removeAttribute('stroke');
+        el.style.removeProperty('fill');
+        el.style.removeProperty('stroke');
+        el.style.removeProperty('color');
+      });
+
+      /* 3. Apply color only to the root <svg> — it cascades to all children */
+      if (fillMode === 'fill') {
+        svg.setAttribute('fill', iconColor);
+        svg.setAttribute('stroke', 'none');
+      } else if (fillMode === 'stroke') {
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', iconColor);
+      } else {
+        /* both */
+        svg.setAttribute('fill', iconColor);
+        svg.setAttribute('stroke', iconColor);
+      }
+
+      /* 4. Force size */
+      svg.style.setProperty('width',  iconSize + 'px', 'important');
+      svg.style.setProperty('height', iconSize + 'px', 'important');
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyIconColors);
+  } else {
+    applyIconColors();
+  }
+
+  /* Shopify Theme Editor live-reload */
+  document.addEventListener('shopify:section:load', function(e) {
+    if (e.target === sectionEl || e.target.contains(sectionEl) || sectionEl.contains(e.target)) {
+      applyIconColors();
+    }
+  });
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Multicolumn",
+  "class": "section",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "Multicolumn",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+       "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        {"value": "end" , "label": "Right"}
+      ],
+      "default":"center"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" },
+        { "value": "hxl", "label": "Extra large" },
+        { "value": "hxxl", "label": "Double extra large" }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+
+    {
+      "type": "header",
+      "content": "Image settings"
+    },
+    {
+      "type": "select",
+      "id": "image_width",
+      "options": [
+        { "value": "third", "label": "One third" },
+        { "value": "half", "label": "One half" },
+        { "value": "full", "label": "Full width" }
+      ],
+      "default": "full",
+      "label": "Image width"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" },
+        { "value": "circle", "label": "Circle" }
+      ],
+      "default": "adapt",
+      "label": "Image ratio"
+    },
+
+    {
+      "type": "header",
+      "content": "SVG / Icon settings"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 32
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_color_override",
+      "label": "Override SVG color with setting below",
+      "default": true,
+      "info": "Turn off to use the SVG's original colors."
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#2c1a14"
+    },
+    {
+      "type": "select",
+      "id": "icon_fill_mode",
+      "label": "Icon color mode",
+      "options": [
+        { "value": "stroke", "label": "Stroke (outlined icons)" },
+        { "value": "fill", "label": "Fill (solid icons)" },
+        { "value": "both", "label": "Both stroke & fill" }
+      ],
+      "default": "stroke",
+      "info": "Match this to your SVG type. Outlined icons use Stroke, solid icons use Fill."
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_bg_enabled",
+      "label": "Show background behind icon",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "icon_bg_color",
+      "label": "Icon background color",
+      "default": "#f2e8e3",
+      "info": "Only visible when background is enabled."
+    },
+    {
+      "type": "range",
+      "id": "icon_bg_size",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Icon background size",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "icon_bg_radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon background border radius",
+      "default": 50,
+      "info": "Set to max (60) for a circle."
+    },
+
+    {
+      "type": "header",
+      "content": "Card heading font"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading font weight",
+      "options": [
+        { "value": "300", "label": "Light (300)" },
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semi-bold (600)" },
+        { "value": "700", "label": "Bold (700)" },
+        { "value": "800", "label": "Extra-bold (800)" },
+        { "value": "900", "label": "Black (900)" }
+      ],
+      "default": "700"
+    },
+
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Button label",
+      "label": "Button label",
+      "info": "Leave blank to hide the button."
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "label": "Number of columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "column_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left",
+      "label": "Column alignment"
+    },
+    {
+      "type": "select",
+      "id": "background_style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "primary", "label": "Primary" }
+      ],
+      "default": "primary",
+      "label": "Card background"
+    },
+
+    {
+      "type": "header",
+      "content": "Card border (Primary style only)"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_border_enabled",
+      "label": "Show card border",
+      "default": false,
+      "info": "Only works when card background is set to Primary."
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#e0d5cf"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "label": "Card border width",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+
+    {
+      "type": "header",
+      "content": "Vertical dividers (None style only)"
+    },
+    {
+      "type": "checkbox",
+      "id": "divider_enabled",
+      "label": "Show vertical dividers between columns",
+      "default": false,
+      "info": "Desktop only. Hidden on mobile automatically. Only works when card background is None."
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#d4c5be"
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Divider width",
+      "default": 1
+    },
+
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "1",
+      "label": "Number of columns on mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "swipe_on_mobile",
+      "default": false,
+      "label": "Enable swipe on mobile"
+    },
+
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Icon / Image"
+        },
+        {
+          "type": "select",
+          "id": "icon_type",
+          "label": "Icon type",
+          "options": [
+            { "value": "image", "label": "Image (image picker)" },
+            { "value": "svg", "label": "SVG code" }
+          ],
+          "default": "image",
+          "info": "Choose Image to upload a photo, or SVG to paste custom icon code."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Used when icon type is set to Image."
+        },
+        {
+          "type": "html",
+          "id": "svg_code",
+          "label": "SVG code",
+          "info": "Paste the full <svg>...</svg> tag here. Size and color are controlled by section settings above."
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "title",
+          "default": "Column",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Pair text with an image or icon to build credibility.</p>",
+          "label": "Description"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "info": "Leave blank to hide the link."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multicolumn",
+      "blocks": [{ "type": "column" }, { "type": "column" }, { "type": "column" }]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,126 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-bar-0": {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping on US orders $75+",
+            "link": ""
+          }
+        },
+        "announcement_hi9Caa": {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping on US orders $75+",
+            "link": ""
+          }
+        },
+        "announcement_TwKwdd": {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping on US orders $75+",
+            "link": ""
+          }
+        },
+        "announcement_AjgwrL": {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping on US orders $75+",
+            "link": ""
+          }
+        },
+        "announcement_WaKFnh": {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping on US orders $75+",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement-bar-0",
+        "announcement_hi9Caa",
+        "announcement_TwKwdd",
+        "announcement_AjgwrL",
+        "announcement_WaKFnh"
+      ],
+      "settings": {
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "enable_marquee": true,
+        "marquee_speed": 30,
+        "color_scheme": "scheme-5",
+        "show_line_separator": true,
+        "show_social": false,
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "font_size": 14
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "enable_transparent_header": true,
+        "transparent_header_bg": "rgba(0,0,0,0)",
+        "transparent_header_text_color": "#ffffff",
+        "enable_scroll_logo_change": false,
+        "enable_scroll_logo_hide": true,
+        "extra__text": "Wholesale",
+        "extra__text_url": "#",
+        "logo_position": "middle-left",
+        "menu_position": "start",
+        "mobile_logo_position": "center",
+        "menu": "header-menu-hub",
+        "menu_type_desktop": "dropdown",
+        "sticky_header_type": "on-scroll-up",
+        "show_line_separator": false,
+        "color_scheme": "scheme-4",
+        "menu_color_scheme": "scheme-1",
+        "custom_search_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); color: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); flex-shrink: 0;\"><g color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" weight=\"regular\"><path d=\"M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z\"></path></g></svg>",
+        "search_icon_size": 24,
+        "custom_cart_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); color: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); flex-shrink: 0;\"><g color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" weight=\"regular\"><path d=\"M230.14,58.87A8,8,0,0,0,224,56H62.68L56.6,22.57A8,8,0,0,0,48.73,16H24a8,8,0,0,0,0,16h18L67.56,172.29a24,24,0,0,0,5.33,11.27,28,28,0,1,0,44.4,8.44h45.42A27.75,27.75,0,0,0,160,204a28,28,0,1,0,28-28H91.17a8,8,0,0,1-7.87-6.57L80.13,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,230.14,58.87ZM104,204a12,12,0,1,1-12-12A12,12,0,0,1,104,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,200,204Zm4-74.57A8,8,0,0,1,196.1,136H77.22L65.59,72H214.41Z\"></path></g></svg>",
+        "cart_icon_size": 24,
+        "custom_account_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); color: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); flex-shrink: 0;\"><g color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" weight=\"regular\"><path d=\"M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z\"></path></g></svg>",
+        "account_icon_size": 24,
+        "show_cart_bubble": true,
+        "cart_bubble_bg": "#000000",
+        "cart_bubble_text": "#ffffff",
+        "cart_bubble_border": "#000000",
+        "cart_bubble_size": 16,
+        "cart_bubble_font": 10,
+        "cart_bubble_border_width": 1,
+        "cart_bubble_top": 3,
+        "cart_bubble_right": -5,
+        "search_icon_stroke": "#ffffff",
+        "search_icon_fill": "#ffffff",
+        "cart_icon_stroke": "#ffffff",
+        "cart_icon_fill": "#ffffff",
+        "account_icon_stroke": "#ffffff",
+        "account_icon_fill": "#ffffff",
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "enable_customer_avatar": true,
+        "margin_bottom": 0,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
+}

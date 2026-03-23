@@ -1,0 +1,293 @@
+/* ============================================================
+   Enhanced Image Banner — section-image-banner-enhanced.css
+   Place in: assets/section-image-banner-enhanced.css
+   ============================================================ */
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   1. VIDEO BACKGROUND
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.banner__media--video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.banner__video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   2. TWO-IMAGE GRID
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.banner__two-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.banner__grid-item {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.banner__grid-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.banner__grid-placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Thin divider between the two images */
+.banner__grid-item + .banner__grid-item {
+  border-left: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Mobile: stack vertically */
+@media screen and (max-width: 749px) {
+  .banner__two-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 60vw;
+  }
+
+  .banner__grid-item {
+    min-height: 50vw;
+  }
+
+  .banner__grid-item + .banner__grid-item {
+    border-left: none;
+    border-top: 2px solid rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   3. MARQUEE BANNER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Wrapper — sits above image / video, below text content */
+.banner__marquee-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  width: 100%;
+  overflow: hidden;
+  /* Subtle frosted strip */
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 1.2rem 0;
+}
+
+/* Scrolling track — two sets of items duplicated for seamless loop */
+.banner__marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: max-content;
+  animation: banner-marquee-scroll 28s linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover for accessibility */
+.banner__marquee-wrap:hover .banner__marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes banner-marquee-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Individual item */
+.banner__marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0 3.2rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Separator "/" */
+.banner__marquee-sep {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 2.4rem;
+  font-weight: 300;
+  line-height: 1;
+  flex-shrink: 0;
+  padding: 0 0.8rem;
+  select: none;
+}
+
+/* Marquee thumbnail image */
+.banner__marquee-img {
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Placeholder when no image provided */
+.banner__marquee-img-placeholder {
+  display: inline-flex;
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.banner__marquee-placeholder-svg {
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+/* Heading text */
+.banner__marquee-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+/* CTA button */
+.banner__marquee-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 2rem;
+  border-radius: 50px;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 500;
+  font-family: inherit;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.banner__marquee-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: #ffffff;
+}
+
+/* Ensure banner has enough bottom room when marquee is active */
+.banner--has-marquee .banner__content {
+  padding-bottom: 8rem;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+@media screen and (max-width: 749px) {
+  .banner__marquee-heading {
+    font-size: 1.6rem;
+  }
+
+  .banner__marquee-item {
+    gap: 0.8rem;
+    padding: 0 2rem;
+  }
+
+  .banner__marquee-img,
+  .banner__marquee-img-placeholder {
+    width: 3.6rem;
+    height: 3.6rem;
+  }
+
+  .banner__marquee-btn {
+    font-size: 1.2rem;
+    padding: 0.5rem 1.4rem;
+  }
+
+  .banner--has-marquee .banner__content {
+    padding-bottom: 7rem;
+  }
+}
+/* ============================
+   HEADING MARQUEE
+============================ */
+
+.banner__heading-marquee{
+width:100%;
+overflow:hidden;
+white-space:nowrap;
+}
+
+.banner__heading-marquee-track{
+display:inline-flex;
+gap:80px;
+animation: banner-heading-marquee 18s linear infinite;
+}
+
+.banner__heading-marquee span{
+font-size:clamp(40px,6vw,90px);
+font-weight:700;
+color:inherit;
+}
+
+@keyframes banner-heading-marquee{
+
+0%{
+transform:translateX(0);
+}
+
+100%{
+transform:translateX(-50%);
+}
+
+}
+
+/* Position */
+
+.banner__heading-marquee--top{
+align-self:flex-start;
+}
+
+.banner__heading-marquee--center{
+align-self:center;
+}
+
+.banner__heading-marquee--bottom{
+align-self:flex-end;
+}

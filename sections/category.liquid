@@ -1,0 +1,271 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'category.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'category.js' | asset_url }}" defer></script>
+<style>
+  #shopify-section-{{ section.id }}{
+    --arrow-color: {{ section.settings.arrow_color }};
+    --arrow-bg: {{ section.settings.arrow_bg_color }};
+  }
+   #shopify-section-{{ section.id }}{
+    --padding-top: {{ section.settings.padding_top }}px;
+    --padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  
+</style>
+
+<div class="product-category-section color-{{ section.settings.color_scheme }} {% if section.settings.enable_mobile_slider %}mobile-slider-enabled{% endif %}">
+  <div class="page-width">
+    <!-- Header -->
+    <div class="heading--card">
+      {% if section.settings.heading_text != blank %}
+        <h2 class="{{ section.settings.heading_size }}">
+          {{ section.settings.heading_text }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.button_label_top != blank %}
+        <a href="{{ section.settings.link_top }}" class="button button--secondary">
+          {{ section.settings.button_label_top }}
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- slider buttons -->
+    <div class="category-slider-arrows">
+      <button class="cat-arrow cat-arrow--left" aria-label="Previous">‹</button>
+      <button class="cat-arrow cat-arrow--right" aria-label="Next">›</button>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid category-slider grid--1-col grid--2-col-tablet grid--{{ section.blocks.size | at_most: 6 }}-col-desktop">
+      {% for block in section.blocks %}
+        <div class="grid__item" {{ block.shopify_attributes }}>
+          <div class="category-card">
+            <!--
+              data-hover-bg: the card's accent color set per block in the editor.
+              This gets picked up by category.js to set the CSS variable dynamically.
+            -->
+            <div
+              class="category-card__media"
+              data-hover-bg="{{ block.settings.hover_bg_color }}"
+              style="--card-hover-bg: {{ block.settings.hover_bg_color }};"
+            >
+              <!-- MARQUEE BACKGROUND TEXT -->
+              <div class="category-marquee">
+                <div class="marquee-row marquee-row--1">
+                  <div class="marquee-track">
+                    {% for i in (1..8) %}
+                      <span>{{ block.settings.hover_bg_text }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="marquee-row marquee-row--2">
+                  <div class="marquee-track">
+                    {% for i in (1..8) %}
+                      <span>{{ block.settings.hover_bg_text }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="marquee-row marquee-row--3">
+                  <div class="marquee-track">
+                    {% for i in (1..8) %}
+                      <span>{{ block.settings.hover_bg_text }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="category-card__image-wrap">
+                {% if block.settings.image != blank %}
+                  {{ block.settings.image | image_url: width: 302, height: 503 | image_tag: loading: 'lazy' }}
+                {% else %}
+                  {%- assign placeholder_index = forloop.index0 | modulo: 4 | plus: 1 -%}
+                  {%- assign placeholder_name = 'collection-apparel-' | append: placeholder_index -%}
+
+                  {{ placeholder_name | placeholder_svg_tag: 'placeholder-svg' }}
+                {% endif %}
+              </div>
+
+              <!-- Hover Circle View Button — label pulled from section setting -->
+              <a href="{{ block.settings.link }}" class="hover-view-btn">
+                {{ section.settings.hover_label | default: 'View' }}
+              </a>
+            </div>
+
+            <!-- Bottom Button -->
+            {% if block.settings.button_label != blank %}
+              <div class="category-bottom-btn">
+                <a
+                  {% if block.settings.button_label == blank %}
+                    role="link" aria-disabled="true"
+                  {% else %}
+                    href="{{block.settings.link }}"
+                  {% endif %}
+                  class="button{% if block.settings.button_style_secondary_2 %} button--secondary{% else %} button--primary{% endif %}"
+                >
+                  {{ block.settings.button_label }}
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Category",
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Product Category",
+      "blocks": [{ "type": "category" }, { "type": "category" }, { "type": "category" }, { "type": "category" }]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Upload Image"
+        },
+        {
+          "type": "color",
+          "id": "hover_bg_color",
+          "label": "Hover Background Color",
+          "default": "#E8F0E9",
+          "info": "Color revealed behind the image when hovered"
+        },
+        {
+          "type": "text",
+          "id": "hover_bg_text",
+          "label": "Hover Background Text",
+          "default": "Beauty Cream",
+          "info": "Text revealed behind the image when hovered"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "default": "Category",
+          "label": "Button Label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary_2",
+          "default": false,
+          "label": "t:sections.image-banner.blocks.buttons.settings.button_style_secondary_2.label"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading_text",
+      "label": "Heading",
+      "default": "Shop Categories"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading Size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        },
+        {
+          "value": "hxl",
+          "label": "t:sections.all.heading_size.options__4.label"
+        },
+        {
+          "value": "hxxl",
+          "label": "t:sections.all.heading_size.options__5.label"
+        }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "text",
+      "id": "hover_label",
+      "label": "Hover Button Label",
+      "default": "View"
+    },
+    {
+      "type": "text",
+      "id": "button_label_top",
+      "label": "Top Button Label",
+      "default": "View All"
+    },
+    {
+      "type": "url",
+      "id": "link_top",
+      "label": "Top Button Link"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Mobile settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_slider",
+      "label": "Enable Mobile Slider",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow Icon Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Arrow Background Color",
+      "default": "#ffffff"
+    }
+  ]
+}
+{% endschema %}

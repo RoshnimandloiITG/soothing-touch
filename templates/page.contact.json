@@ -1,0 +1,103 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "form": {
+      "type": "contact-form",
+      "blocks": {
+        "hero_nDCzHd": {
+          "type": "hero",
+          "settings": {
+            "bg_image": "shopify://shop_images/3ObGGq8WV3tIvhVrHlN46eKEswI.webp",
+            "heading": "We're Here To Help",
+            "subheading": "Your satisfaction is important to us!"
+          }
+        },
+        "send_message_KPma7N": {
+          "type": "send_message",
+          "settings": {
+            "heading": "Send Us A Message",
+            "brand_text": "Your Store",
+            "card_title": "Help & Support Request",
+            "card_desc": "We're here to help! Please click start below to begin your support request.",
+            "btn_label": "START",
+            "btn_url": ""
+          }
+        },
+        "contact_info_EeBDQ7": {
+          "type": "contact_info",
+          "settings": {
+            "heading": "Contact Information",
+            "address_label": "Address here",
+            "address": "",
+            "address_note": "",
+            "phone_label": "Phone",
+            "phone_content": "",
+            "email_label": "Email",
+            "email": ""
+          }
+        },
+        "wholesale_Y7JbYD": {
+          "type": "wholesale",
+          "settings": {
+            "heading": "Wholesale Opportunities",
+            "description": "Are you interested in becoming a wholesale distributor for our products?\n\nWe offer competitive wholesale pricing and support for qualified retailers, spas, and wellness centers.",
+            "link_label": "Fill out your application here",
+            "link_url": ""
+          }
+        },
+        "help_strip_feJWNB": {
+          "type": "help_strip",
+          "settings": {
+            "heading": "NEED HELP RIGHT NOW",
+            "heading_suffix": "?",
+            "subheading": "Our intelligent virtual assistant can likely help you with any of your questions. Call: 800-000-0000",
+            "col1_icon": "box",
+            "col1_label": "QUICK QUESTIONS",
+            "col1_desc": "Product info, ingredients, usage",
+            "col2_icon": "phone",
+            "col2_label": "ORDER ISSUES",
+            "col2_desc": "Shipping, returns, order status",
+            "col3_icon": "bag",
+            "col3_label": "BUSINESS INQUIRIES",
+            "col3_desc": "Wholesale, partnerships, bulk orders"
+          }
+        }
+      },
+      "block_order": [
+        "hero_nDCzHd",
+        "send_message_KPma7N",
+        "contact_info_EeBDQ7",
+        "wholesale_Y7JbYD",
+        "help_strip_feJWNB"
+      ],
+      "settings": {
+        "accent_color": "#b84c3a",
+        "page_bg_color": "#fdf6f3",
+        "card_bg_color": "#ffffff",
+        "text_main_color": "#2c1a14",
+        "text_muted_color": "#6b4c42",
+        "btn_bg_color": "#b84c3a",
+        "btn_text_color": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "form"
+  ]
+}

@@ -1,0 +1,1995 @@
+{% comment %}
+  ═══════════════════════════════════════════════════════
+  DYNAMIC IMAGE BANNER SECTION
+  Two modes selectable via section settings:
+    1. marquee_banner  — full/half-width marquee heading + text + button over 1 image/video
+    2. two_image_banner — two image/video panels side by side, each with own heading/text/button
+  
+  Features:
+  - Sticky banner option (stays fixed until next section scrolls over)
+  - Color scheme + padding settings
+  - Left/right fade overlay option
+  - Media position (top / center / bottom)
+  - Marquee: full or half width, speed control, own height setting
+  - Two-image: flex direction H/V, 9 content positions per panel, shared height setting
+  - Panel content flex-direction: vertical (stacked) or horizontal (side-by-side)
+  - All text fields optional — hidden when blank (placeholders in editor)
+  ═══════════════════════════════════════════════════════
+{% endcomment %}
+
+{%- liquid
+  assign mode        = section.settings.banner_type
+  assign is_sticky   = section.settings.sticky_banner
+  assign scheme      = section.settings.color_scheme
+-%}
+
+{%- style -%}
+  #banner-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --marquee-speed: {{ section.settings.marquee_speed }}s;
+    --fade-width: {{ section.settings.fade_width }}%;
+    --mq-banner-height: {{ section.settings.mq_banner_height }}px;
+    --two-banner-height: {{ section.settings.two_banner_height }}px;
+  }
+{%- endstyle -%}
+
+<section
+  id="banner-{{ section.id }}"
+  class="dib color-{{ scheme }}{% if is_sticky %} dib--sticky{% endif %} dib--{{ mode }}"
+  data-section-id="{{ section.id }}"
+>
+
+{%- if mode == 'marquee_banner' -%}
+  {%- comment -%}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    MODE 1 : MARQUEE BANNER
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{%- endcomment -%}
+
+  <div class="dib__mq-wrap">
+
+    {%- comment -%} ── Media background ── {%- endcomment -%}
+    <div class="dib__media-layer dib__media-layer--pos-{{ section.settings.media_position }}">
+      {%- if section.settings.mq_media_type == 'video' and section.settings.mq_video != blank -%}
+        <video class="dib__media" src="{{ section.settings.mq_video }}" autoplay muted loop playsinline preload="metadata"></video>
+      {%- elsif section.settings.mq_image != blank -%}
+        <img class="dib__media"
+          src="{{ section.settings.mq_image | img_url: '1600x' }}"
+          srcset="{{ section.settings.mq_image | img_url: '800x' }} 800w, {{ section.settings.mq_image | img_url: '1400x' }} 1400w, {{ section.settings.mq_image | img_url: '1800x' }} 1800w"
+          sizes="100vw"
+          alt="{{ section.settings.mq_image.alt | escape }}"
+          loading="lazy"
+          width="100"
+          height="100"
+        >
+      {%- else -%}
+        <div class="dib__media-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Add an image or video in settings</span>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Fades {%- endcomment -%}
+      {%- if section.settings.side_fade -%}
+        <div class="dib__fade dib__fade--left"></div>
+        <div class="dib__fade dib__fade--right"></div>
+      {%- endif -%}
+
+      {%- comment -%} Dark overlay {%- endcomment -%}
+      <div class="dib__overlay"></div>
+    </div>
+
+    {%- comment -%} ── Content over media ── {%- endcomment -%}
+    <div class="dib__mq-content">
+
+      {%- comment -%} MARQUEE heading {%- endcomment -%}
+      {%- if section.settings.mq_heading != blank -%}
+        <div class="dib__marquee-outer dib__marquee-outer--{{ section.settings.marquee_width }}">
+          <div class="dib__marquee-track">
+            {%- assign mq_text = section.settings.mq_heading -%}
+            {%- for i in (1..8) -%}
+              <span class="dib__marquee-item">{{ mq_text }}</span>
+              <span class="dib__marquee-sep" aria-hidden="true">✦</span>
+            {%- endfor -%}
+            {%- comment -%} duplicate for seamless loop {%- endcomment -%}
+            {%- for i in (1..8) -%}
+              <span class="dib__marquee-item">{{ mq_text }}</span>
+              <span class="dib__marquee-sep" aria-hidden="true">✦</span>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- else -%}
+        <div class="dib__marquee-outer dib__marquee-outer--{{ section.settings.marquee_width }} dib__placeholder-block">
+          <div class="dib__marquee-track">
+            {%- for i in (1..8) -%}
+              <span class="dib__marquee-item">Your Heading Here</span>
+              <span class="dib__marquee-sep" aria-hidden="true">✦</span>
+            {%- endfor -%}
+            {%- for i in (1..8) -%}
+              <span class="dib__marquee-item">Your Heading Here</span>
+              <span class="dib__marquee-sep" aria-hidden="true">✦</span>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Sub-content: text + button {%- endcomment -%}
+      {%- if section.settings.mq_text != blank or section.settings.mq_btn_label != blank -%}
+        <div class="dib__mq-sub">
+          {%- if section.settings.mq_text != blank -%}
+            <p class="dib__text">{{ section.settings.mq_text }}</p>
+          {%- endif -%}
+          {%- if section.settings.mq_btn_label != blank -%}
+            <a class="dib__btn" href="{{ section.settings.mq_btn_link | default: '#' }}">
+              {{ section.settings.mq_btn_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+
+{%- else -%}
+  {%- comment -%}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    MODE 2 : TWO IMAGE BANNER
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{%- endcomment -%}
+
+  <div class="dib__two-wrap dib__two-wrap--{{ section.settings.two_flex_dir }}">
+
+    {%- for panel_index in (1..2) -%}
+      {%- if panel_index == 1 -%}
+        {%- assign p_media_type    = section.settings.panel1_media_type -%}
+        {%- assign p_image         = section.settings.panel1_image -%}
+        {%- assign p_video         = section.settings.panel1_video -%}
+        {%- assign p_heading       = section.settings.panel1_heading -%}
+        {%- assign p_text          = section.settings.panel1_text -%}
+        {%- assign p_btn_label     = section.settings.panel1_btn_label -%}
+        {%- assign p_btn_link      = section.settings.panel1_btn_link -%}
+        {%- assign p_pos           = section.settings.panel1_content_pos -%}
+        {%- assign p_media_pos     = section.settings.panel1_media_pos -%}
+        {%- assign p_content_dir   = section.settings.panel1_content_dir -%}
+      {%- else -%}
+        {%- assign p_media_type    = section.settings.panel2_media_type -%}
+        {%- assign p_image         = section.settings.panel2_image -%}
+        {%- assign p_video         = section.settings.panel2_video -%}
+        {%- assign p_heading       = section.settings.panel2_heading -%}
+        {%- assign p_text          = section.settings.panel2_text -%}
+        {%- assign p_btn_label     = section.settings.panel2_btn_label -%}
+        {%- assign p_btn_link      = section.settings.panel2_btn_link -%}
+        {%- assign p_pos           = section.settings.panel2_content_pos -%}
+        {%- assign p_media_pos     = section.settings.panel2_media_pos -%}
+        {%- assign p_content_dir   = section.settings.panel2_content_dir -%}
+      {%- endif -%}
+
+      <div class="dib__panel">
+
+        {%- comment -%} Media {%- endcomment -%}
+        <div class="dib__media-layer dib__media-layer--pos-{{ p_media_pos }}">
+          {%- if p_media_type == 'video' and p_video != blank -%}
+            <video class="dib__media" src="{{ p_video }}" autoplay muted loop playsinline preload="metadata"></video>
+          {%- elsif p_image != blank -%}
+            <img class="dib__media"
+              src="{{ p_image | img_url: '900x' }}"
+              srcset="{{ p_image | img_url: '600x' }} 600w, {{ p_image | img_url: '900x' }} 900w, {{ p_image | img_url: '1200x' }} 1200w"
+              sizes="(max-width:768px) 100vw, 50vw"
+              alt="{{ p_image.alt | escape }}"
+              loading="lazy"
+              width="100"
+              height="100"
+            >
+          {%- else -%}
+            <div class="dib__media-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Panel {{ panel_index }}: Add image or video</span>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.side_fade -%}
+            <div class="dib__fade dib__fade--left"></div>
+            <div class="dib__fade dib__fade--right"></div>
+          {%- endif -%}
+          <div class="dib__overlay"></div>
+        </div>
+
+        {%- comment -%} Content overlay — position + flex-direction combined ── {%- endcomment -%}
+        <div class="dib__panel-content dib__panel-content--{{ p_pos }} dib__panel-content--dir-{{ p_content_dir }}">
+          {%- if p_heading != blank -%}
+            <h2 class="dib__heading">{{ p_heading }}</h2>
+          {%- elsif request.design_mode -%}
+            <h2 class="dib__heading dib__placeholder-text">Panel {{ panel_index }} Heading</h2>
+          {%- endif -%}
+
+          {%- if p_text != blank -%}
+            <p class="dib__text">{{ p_text }}</p>
+          {%- elsif request.design_mode -%}
+            <p class="dib__text dib__placeholder-text">Panel {{ panel_index }} description text goes here.</p>
+          {%- endif -%}
+
+          {%- if p_btn_label != blank -%}
+            <a class="dib__btn" href="{{ p_btn_link | default: '#' }}">{{ p_btn_label }}</a>
+          {%- elsif request.design_mode -%}
+            <a class="dib__btn dib__placeholder-text" href="#">Button {{ panel_index }}</a>
+          {%- endif -%}
+        </div>
+
+      </div>
+    {%- endfor -%}
+
+  </div>
+{%- endif -%}
+
+</section>
+
+<style>
+/* ════════════════════════════════════════
+   BASE
+════════════════════════════════════════ */
+.dib {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Color schemes */
+.dib.color-scheme-1 { --dib-text: #fff; --dib-btn-bg: #fff; --dib-btn-text: #2c1a14; --dib-overlay: rgba(0,0,0,0.25); --dib-fade: rgba(253,246,243,0.80); }
+.dib.color-scheme-2 { --dib-text: #fff; --dib-btn-bg: #fff; --dib-btn-text: #1a1a1a; --dib-overlay: rgba(0,0,0,0.30); --dib-fade: rgba(255,255,255,0.80); }
+.dib.color-scheme-3 { --dib-text: #2c1a14; --dib-btn-bg: #2c1a14; --dib-btn-text: #fff; --dib-overlay: rgba(242,232,227,0.20); --dib-fade: rgba(242,232,227,0.85); }
+.dib.color-scheme-4 { --dib-text: #fdf6f3; --dib-btn-bg: #fdf6f3; --dib-btn-text: #2c1a14; --dib-overlay: rgba(44,26,20,0.40); --dib-fade: rgba(44,26,20,0.85); }
+.dib.color-scheme-5 { --dib-text: #f5f5f5; --dib-btn-bg: #f5f5f5; --dib-btn-text: #111; --dib-overlay: rgba(0,0,0,0.45); --dib-fade: rgba(17,17,17,0.85); }
+
+/* ── Sticky — driven by JS, not CSS position:sticky ──
+   JS adds .dib--is-fixed when banner should be pinned,
+   and removes it once the sentinel exits viewport.        */
+.dib--sticky-wrap {
+  /* wrapper reserves the banner's height so page doesn't jump */
+  position: relative;
+}
+.dib--is-fixed {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 200 !important;
+  width: 100% !important;
+}
+
+/* ════════════════════════════════════════
+   MEDIA LAYER (shared)
+════════════════════════════════════════ */
+.dib__media-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.dib__media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Media position */
+.dib__media-layer--pos-top    .dib__media { object-position: center top; }
+.dib__media-layer--pos-center .dib__media { object-position: center center; }
+.dib__media-layer--pos-bottom .dib__media { object-position: center bottom; }
+
+/* Dark overlay */
+.dib__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--dib-overlay, rgba(0,0,0,0.28));
+  opacity: var(--overlay-opacity, 0.28);
+  pointer-events: none;
+}
+
+/* Placeholder */
+.dib__media-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e8ddd8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #7a6560;
+}
+
+/* Side fades */
+.dib__fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--fade-width, 12%);
+  z-index: 2;
+  pointer-events: none;
+}
+.dib__fade--left  { left: 0;  background: linear-gradient(to right, var(--dib-fade, rgba(0,0,0,0.6)), transparent); }
+.dib__fade--right { right: 0; background: linear-gradient(to left,  var(--dib-fade, rgba(0,0,0,0.6)), transparent); }
+
+/* Shared text styles */
+.dib__heading {
+  color: var(--dib-text, #fff);
+  font-size: clamp(24px, 5vw, 64px);
+  font-weight: 800;
+  margin: 0 0 12px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.dib__text {
+  color: var(--dib-text, #fff);
+  font-size: clamp(14px, 1.6vw, 18px);
+  margin: 0 0 18px;
+  line-height: 1.6;
+  opacity: 0.88;
+  max-width: 520px;
+}
+.dib__btn {
+  display: inline-block;
+  padding: 13px 32px;
+  background: var(--dib-btn-bg, #fff);
+  color: var(--dib-btn-text, #2c1a14);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  border-radius: 100px;
+  transition: opacity 0.2s, transform 0.2s;
+  border: none;
+}
+.dib__btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* Placeholder styling in editor */
+.dib__placeholder-text { opacity: 0.35 !important; font-style: italic; }
+.dib__placeholder-block { opacity: 0.35; }
+
+/* ════════════════════════════════════════
+   MODE 1 — MARQUEE BANNER
+════════════════════════════════════════ */
+.dib__mq-wrap {
+  position: relative;
+  height: var(--mq-banner-height, 500px);
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-content : {{ section.setting.text_position }};
+}
+
+.dib__mq-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Marquee ── */
+.dib__marquee-outer {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+}
+.dib__marquee-outer--half {
+  max-width: 50%;
+  margin: 0 auto;
+}
+.dib__marquee-outer--full {
+  max-width: 100%;
+}
+
+.dib__marquee-track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 0;
+  animation: dib-marquee var(--marquee-speed, 18s) linear infinite;
+  will-change: transform;
+}
+
+.dib__marquee-track:hover { animation-play-state: paused; }
+
+.dib__marquee-item {
+  color: var(--dib-text, #fff);
+  font-size: clamp(28px, 5.5vw, 72px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  padding: 0 20px;
+  white-space: nowrap;
+}
+
+.dib__marquee-sep {
+  color: var(--dib-text, #fff);
+  font-size: clamp(20px, 3vw, 40px);
+  opacity: 0.55;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+@keyframes dib-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.dib__mq-sub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 0 20px;
+  text-align: center;
+  position: relative;
+  z-index: 3;
+}
+
+/* ════════════════════════════════════════
+   MODE 2 — TWO IMAGE BANNER
+════════════════════════════════════════ */
+.dib__two-wrap {
+  display: flex;
+  width: 100%;
+  height: var(--two-banner-height, 600px);
+  min-height: 320px;
+}
+
+/* Outer flex direction (panel layout) */
+.dib__two-wrap--horizontal { flex-direction: row; }
+.dib__two-wrap--vertical   { flex-direction: column; }
+
+.dib__panel {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ── Content position wrapper ── */
+.dib__panel-content {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  padding: 32px;
+  box-sizing: border-box;
+  gap: 16px;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   VERTICAL direction  (flex-direction: column)
+   Main axis   = vertical   → justify-content = top / middle / bottom
+   Cross axis  = horizontal → align-items     = left / center / right
+   text-align must always match the horizontal (cross) axis value
+──────────────────────────────────────────────────────────────── */
+.dib__panel-content--dir-vertical {
+  flex-direction: column;
+}
+
+.dib__panel-content--dir-vertical.dib__panel-content--top-left {
+  justify-content: flex-start; align-items: flex-start; text-align: left;
+}
+.dib__panel-content--dir-vertical.dib__panel-content--top-center {
+  justify-content: flex-start; align-items: center; text-align: center;
+}
+.dib__panel-content--dir-vertical.dib__panel-content--top-right {
+  justify-content: flex-start; align-items: flex-end; text-align: right;
+}
+.dib__panel-content--dir-vertical.dib__panel-content--middle-left {
+  justify-content: center; align-items: flex-start; text-align: left;
+}
+.dib__panel-content--dir-vertical.dib__panel-content--middle-center {
+  justify-content: center; align-items: center; text-align: center;
+}
+.dib__panel-content--dir-vertical.dib__panel-content--middle-right {
+  justify-content: center; align-items: flex-end; text-align: right;
+}
+.dib__panel-content--dir-vertical.dib__panel-content--bottom-left {
+  justify-content: flex-end; align-items: flex-start; text-align: left;
+}
+.dib__panel-content--dir-vertical.dib__panel-content--bottom-center {
+  justify-content: flex-end; align-items: center; text-align: center;
+}
+.dib__panel-content--dir-vertical.dib__panel-content--bottom-right {
+  justify-content: flex-end; align-items: flex-end; text-align: right;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   HORIZONTAL direction  (flex-direction: row)
+   Main axis   = horizontal → justify-content = left / center / right
+   Cross axis  = vertical   → align-items     = top / middle / bottom
+   align-self: center on every child ensures items stay on the same
+   vertical midline when they share one row (regardless of height diff).
+──────────────────────────────────────────────────────────────── */
+.dib__panel-content--dir-horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+/* remove bottom margins so gap: 16px controls spacing in row mode */
+.dib__panel-content--dir-horizontal .dib__heading,
+.dib__panel-content--dir-horizontal .dib__text {
+  margin-bottom: 0;
+}
+
+/* each child inherits the container's cross-axis alignment
+   so heading, text, and button stay vertically equal on one line */
+.dib__panel-content--dir-horizontal > .dib__heading,
+.dib__panel-content--dir-horizontal > .dib__text,
+.dib__panel-content--dir-horizontal > .dib__btn {
+  align-self: center;
+}
+
+/* override align-self for top / bottom positions */
+.dib__panel-content--dir-horizontal.dib__panel-content--top-left > *,
+.dib__panel-content--dir-horizontal.dib__panel-content--top-center > *,
+.dib__panel-content--dir-horizontal.dib__panel-content--top-right > * {
+  align-self: flex-start;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--middle-left > *,
+.dib__panel-content--dir-horizontal.dib__panel-content--middle-center > *,
+.dib__panel-content--dir-horizontal.dib__panel-content--middle-right > * {
+  align-self: center;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--bottom-left > *,
+.dib__panel-content--dir-horizontal.dib__panel-content--bottom-center > *,
+.dib__panel-content--dir-horizontal.dib__panel-content--bottom-right > * {
+  align-self: flex-end;
+}
+
+.dib__panel-content--dir-horizontal.dib__panel-content--top-left {
+  justify-content: flex-start; align-items: flex-start; text-align: left;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--top-center {
+  justify-content: center; align-items: flex-start; text-align: center;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--top-right {
+  justify-content: flex-end; align-items: flex-start; text-align: right;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--middle-left {
+  justify-content: flex-start; align-items: center; text-align: left;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--middle-center {
+  justify-content: center; align-items: center; text-align: center;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--middle-right {
+  justify-content: flex-end; align-items: center; text-align: right;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--bottom-left {
+  justify-content: flex-start; align-items: flex-end; text-align: left;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--bottom-center {
+  justify-content: center; align-items: flex-end; text-align: center;
+}
+.dib__panel-content--dir-horizontal.dib__panel-content--bottom-right {
+  justify-content: flex-end; align-items: flex-end; text-align: right;
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .dib__two-wrap--horizontal { flex-direction: column; }
+
+  .dib__panel { min-height: 300px; }
+
+  .dib__mq-wrap { height: auto; min-height: 220px; padding: 40px 0; }
+
+  .dib__marquee-outer--half { max-width: 90%; }
+
+  .dib__panel-content { padding: 20px; }
+
+  .dib__heading { font-size: clamp(20px, 7vw, 36px); }
+
+  /* On mobile, horizontal direction reverts to column.
+     Re-map justify/align so all 9 positions still work correctly. */
+  .dib__panel-content--dir-horizontal { flex-direction: column; }
+
+  .dib__panel-content--dir-horizontal.dib__panel-content--top-left      { justify-content: flex-start; align-items: flex-start; }
+  .dib__panel-content--dir-horizontal.dib__panel-content--top-center    { justify-content: flex-start; align-items: center; }
+  .dib__panel-content--dir-horizontal.dib__panel-content--top-right     { justify-content: flex-start; align-items: flex-end; }
+  .dib__panel-content--dir-horizontal.dib__panel-content--middle-left   { justify-content: center;     align-items: flex-start; }
+  .dib__panel-content--dir-horizontal.dib__panel-content--middle-center { justify-content: center;     align-items: center; }
+  .dib__panel-content--dir-horizontal.dib__panel-content--middle-right  { justify-content: center;     align-items: flex-end; }
+  .dib__panel-content--dir-horizontal.dib__panel-content--bottom-left   { justify-content: flex-end;   align-items: flex-start; }
+  .dib__panel-content--dir-horizontal.dib__panel-content--bottom-center { justify-content: flex-end;   align-items: center; }
+  .dib__panel-content--dir-horizontal.dib__panel-content--bottom-right  { justify-content: flex-end;   align-items: flex-end; }
+}
+
+@media (max-width: 480px) {
+  .dib__btn { padding: 11px 24px; font-size: 13px; }
+}
+</style>
+<script>
+(function () {
+  'use strict';
+
+  function initSticky(sectionId) {
+    var banner  = document.getElementById('banner-' + sectionId);
+    if (!banner) return;
+
+    // Only activate when sticky checkbox is on (class set by Liquid)
+    if (!banner.classList.contains('dib--sticky')) return;
+
+    // ------------------------------------------------------------------
+    // Wrap banner in a sizing wrapper so the page doesn't collapse when
+    // the banner goes fixed (fixed elements leave normal flow).
+    // ------------------------------------------------------------------
+    var wrap = document.createElement('div');
+    wrap.className = 'dib--sticky-wrap';
+    banner.parentNode.insertBefore(wrap, banner);
+    wrap.appendChild(banner);
+
+    function setWrapHeight() {
+      wrap.style.height = banner.offsetHeight + 'px';
+    }
+    setWrapHeight();
+    window.addEventListener('resize', setWrapHeight);
+
+    // ------------------------------------------------------------------
+    // Sentinel element — sits right after the wrapper.
+    // When it scrolls above the viewport top, banner goes fixed.
+    // When it comes back into view, banner returns to normal flow.
+    // ------------------------------------------------------------------
+    var sentinel = document.createElement('div');
+    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;';
+    wrap.insertAdjacentElement('beforebegin', sentinel);
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) {
+            // sentinel left viewport upward → pin banner
+            banner.classList.add('dib--is-fixed');
+            wrap.style.height = banner.offsetHeight + 'px'; // keep space reserved
+          } else {
+            // sentinel visible again → un-pin banner
+            banner.classList.remove('dib--is-fixed');
+          }
+        });
+      },
+      { threshold: 0, rootMargin: '0px 0px 0px 0px' }
+    );
+
+    observer.observe(sentinel);
+  }
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    initSticky('{{ section.id }}');
+  });
+
+  // Re-run when Shopify theme editor reloads the section
+  if (window.Shopify && window.Shopify.designMode) {
+    document.addEventListener('shopify:section:load', function (e) {
+      if (e.detail && e.detail.sectionId === '{{ section.id }}') {
+        initSticky('{{ section.id }}');
+      }
+    });
+  }
+})();
+</script>
+
+
+{% schema %}
+{
+  "name": "Image Banner",
+  "tag": "section",
+  "class": "dib-section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Banner Type"
+    },
+    {
+      "type": "select",
+      "id": "banner_type",
+      "label": "Banner type",
+      "options": [
+        { "value": "marquee_banner",   "label": "Marquee Banner" },
+        { "value": "two_image_banner", "label": "Two Image Banner" }
+      ],
+      "default": "marquee_banner",
+      "info": "Switch between a marquee text banner and a two-panel image/video banner."
+    },
+    {
+      "type": "header",
+      "content": "Global Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_banner",
+      "label": "Sticky banner",
+      "default": false,
+      "info": "Banner stays fixed at top until the next section scrolls over it."
+    },
+    {
+      "type": "checkbox",
+      "id": "side_fade",
+      "label": "Left & right edge fade",
+      "default": false,
+      "info": "Adds a gradient fade on the left and right edges of the media."
+    },
+    {
+      "type": "range",
+      "id": "fade_width",
+      "min": 4,
+      "max": 30,
+      "step": 1,
+      "unit": "%",
+      "label": "Fade width",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Dark overlay opacity",
+      "default": 25,
+      "info": "Darkens the background media to improve text readability."
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "scheme-1", "label": "Warm Cream" },
+        { "value": "scheme-2", "label": "Pure White" },
+        { "value": "scheme-3", "label": "Soft Rose" },
+        { "value": "scheme-4", "label": "Dark Espresso" },
+        { "value": "scheme-5", "label": "Midnight Black" }
+      ],
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 0
+    },
+
+    {
+      "type": "header",
+      "content": "━━ MARQUEE BANNER Settings ━━"
+    },
+    {
+      "type": "range",
+      "id": "mq_banner_height",
+      "min": 200,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Marquee banner height",
+      "default": 560,
+      "info": "Controls the height of the marquee banner only."
+    },
+    {
+      "type": "select",
+      "id": "mq_media_type",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mq_image",
+      "label": "Background image",
+      "info": "Used when media type is Image."
+    },
+    {
+      "type": "text",
+      "id": "mq_video",
+      "label": "Background video URL",
+      "info": "Direct .mp4 URL. Used when media type is Video."
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media focal position",
+      "options": [
+          { "value": "top",    "label": "Top" },
+          { "value": "center", "label": "Center" },
+          { "value": "bottom", "label": "Bottom" }
+        ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "mq_heading",
+      "label": "Marquee heading text",
+      "default": "Glow. Nourish. Repeat.",
+      "info": "This text will scroll as the marquee. Leave blank to show a placeholder in the editor."
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text focal position",
+      "options": [
+          { "value": "flex-start",  "label": "Top" },
+          { "value": "center", "label": "Center" },
+          { "value": "flex-end", "label": "Bottom" }
+        ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "marquee_width",
+      "label": "Marquee width",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "half", "label": "Half width (centered)" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "range",
+      "id": "marquee_speed",
+      "min": 4,
+      "max": 60,
+      "step": 2,
+      "unit": "s",
+      "label": "Marquee speed (lower = faster)",
+      "default": 18
+    },
+    {
+      "type": "textarea",
+      "id": "mq_text",
+      "label": "Subtext (below marquee)",
+      "info": "Optional description shown below the marquee. Leave blank to hide."
+    },
+    {
+      "type": "text",
+      "id": "mq_btn_label",
+      "label": "Button label",
+      "info": "Leave blank to hide button."
+    },
+    {
+      "type": "url",
+      "id": "mq_btn_link",
+      "label": "Button link"
+    },
+
+    {
+      "type": "header",
+      "content": "━━ TWO IMAGE BANNER Settings ━━"
+    },
+    {
+      "type": "range",
+      "id": "two_banner_height",
+      "min": 200,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Two-panel banner height",
+      "default": 600,
+      "info": "Controls the height of both panels together. One setting affects both panels equally."
+    },
+    {
+      "type": "select",
+      "id": "two_flex_dir",
+      "label": "Panel layout direction",
+      "options": [
+        { "value": "horizontal", "label": "Side by side (horizontal)" },
+        { "value": "vertical",   "label": "Stacked (vertical)" }
+      ],
+      "default": "horizontal",
+      "info": "Choose how the two panels are arranged."
+    },
+
+    {
+      "type": "header",
+      "content": "Panel 1"
+    },
+    {
+      "type": "select",
+      "id": "panel1_media_type",
+      "label": "Panel 1 — Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "panel1_image",
+      "label": "Panel 1 — Image"
+    },
+    {
+      "type": "text",
+      "id": "panel1_video",
+      "label": "Panel 1 — Video URL",
+      "info": "Direct .mp4 URL."
+    },
+    {
+      "type": "select",
+      "id": "panel1_media_pos",
+      "label": "Panel 1 — Media focal point",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "panel1_content_dir",
+      "label": "Panel 1 — Content direction",
+      "options": [
+        { "value": "vertical",   "label": "Vertical (stacked)" },
+        { "value": "horizontal", "label": "Horizontal (side by side)" }
+      ],
+      "default": "vertical",
+      "info": "Vertical: heading, text and button stack top-to-bottom. Horizontal: they sit side-by-side in a row."
+    },
+    {
+      "type": "text",
+      "id": "panel1_heading",
+      "label": "Panel 1 — Heading",
+      "info": "Leave blank to hide."
+    },
+    {
+      "type": "textarea",
+      "id": "panel1_text",
+      "label": "Panel 1 — Text",
+      "info": "Leave blank to hide."
+    },
+    {
+      "type": "text",
+      "id": "panel1_btn_label",
+      "label": "Panel 1 — Button label",
+      "info": "Leave blank to hide."
+    },
+    {
+      "type": "url",
+      "id": "panel1_btn_link",
+      "label": "Panel 1 — Button link"
+    },
+    {
+      "type": "select",
+      "id": "panel1_content_pos",
+      "label": "Panel 1 — Content position",
+      "options": [
+        { "value": "top-left",      "label": "Top Left" },
+        { "value": "top-center",    "label": "Top Center" },
+        { "value": "top-right",     "label": "Top Right" },
+        { "value": "middle-left",   "label": "Middle Left" },
+        { "value": "middle-center", "label": "Middle Center" },
+        { "value": "middle-right",  "label": "Middle Right" },
+        { "value": "bottom-left",   "label": "Bottom Left" },
+        { "value": "bottom-center", "label": "Bottom Center" },
+        { "value": "bottom-right",  "label": "Bottom Right" }
+      ],
+      "default": "bottom-left"
+    },
+
+    {
+      "type": "header",
+      "content": "Panel 2"
+    },
+    {
+      "type": "select",
+      "id": "panel2_media_type",
+      "label": "Panel 2 — Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "panel2_image",
+      "label": "Panel 2 — Image"
+    },
+    {
+      "type": "text",
+      "id": "panel2_video",
+      "label": "Panel 2 — Video URL",
+      "info": "Direct .mp4 URL."
+    },
+    {
+      "type": "select",
+      "id": "panel2_media_pos",
+      "label": "Panel 2 — Media focal point",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "panel2_content_dir",
+      "label": "Panel 2 — Content direction",
+      "options": [
+        { "value": "vertical",   "label": "Vertical (stacked)" },
+        { "value": "horizontal", "label": "Horizontal (side by side)" }
+      ],
+      "default": "vertical",
+      "info": "Vertical: heading, text and button stack top-to-bottom. Horizontal: they sit side-by-side in a row."
+    },
+    {
+      "type": "text",
+      "id": "panel2_heading",
+      "label": "Panel 2 — Heading",
+      "info": "Leave blank to hide."
+    },
+    {
+      "type": "textarea",
+      "id": "panel2_text",
+      "label": "Panel 2 — Text",
+      "info": "Leave blank to hide."
+    },
+    {
+      "type": "text",
+      "id": "panel2_btn_label",
+      "label": "Panel 2 — Button label",
+      "info": "Leave blank to hide."
+    },
+    {
+      "type": "url",
+      "id": "panel2_btn_link",
+      "label": "Panel 2 — Button link"
+    },
+    {
+      "type": "select",
+      "id": "panel2_content_pos",
+      "label": "Panel 2 — Content position",
+      "options": [
+        { "value": "top-left",      "label": "Top Left" },
+        { "value": "top-center",    "label": "Top Center" },
+        { "value": "top-right",     "label": "Top Right" },
+        { "value": "middle-left",   "label": "Middle Left" },
+        { "value": "middle-center", "label": "Middle Center" },
+        { "value": "middle-right",  "label": "Middle Right" },
+        { "value": "bottom-left",   "label": "Bottom Left" },
+        { "value": "bottom-center", "label": "Bottom Center" },
+        { "value": "bottom-right",  "label": "Bottom Right" }
+      ],
+      "default": "bottom-right"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image Banner — Marquee",
+      "settings": {
+        "banner_type": "marquee_banner",
+        "mq_heading": "Glow. Nourish. Repeat.",
+        "marquee_width": "full",
+        "marquee_speed": 18,
+        "mq_banner_height": 560
+      }
+    },
+    {
+      "name": "Image Banner — Two Panel",
+      "settings": {
+        "banner_type": "two_image_banner",
+        "two_flex_dir": "horizontal",
+        "two_banner_height": 600,
+        "panel1_content_pos": "bottom-left",
+        "panel1_content_dir": "vertical",
+        "panel2_content_pos": "bottom-right",
+        "panel2_content_dir": "vertical"
+      }
+    }
+  ]
+}
+{% endschema %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %}
+  {% comment %}
+    ═══════════════════════════════════════════════════════
+    DYNAMIC IMAGE BANNER SECTION
+    Two modes selectable via section settings:
+      1. marquee_banner  — full/half-width marquee heading + text + button over 1 image/video
+      2. two_image_banner — two image/video panels side by side, each with own heading/text/button
+
+    Features:
+    - Sticky banner option (stays fixed until next section scrolls over)
+    - Color scheme + padding settings
+    - Left/right fade overlay option
+    - Media position (top / center / bottom)
+    - Marquee: full or half width, speed control
+    - Two-image: flex direction H/V, 9 content positions per panel
+    - All text fields optional — hidden when blank (placeholders in editor)
+    ═══════════════════════════════════════════════════════
+  {% endcomment %}
+
+  {%- liquid
+    assign mode        = section.settings.banner_type
+    assign is_sticky   = section.settings.sticky_banner
+    assign scheme      = section.settings.color_scheme
+  -%}
+
+  {%- style -%}
+    #banner-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+      --banner-height: {{ section.settings.banner_height }}px;
+      --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+      --marquee-speed: {{ section.settings.marquee_speed }}s;
+      --fade-width: {{ section.settings.fade_width }}%;
+    }
+  {%- endstyle -%}
+
+  <section
+    id="banner-{{ section.id }}"
+    class="dib color-{{ scheme }}{% if is_sticky %} dib--sticky{% endif %} dib--{{ mode }}"
+    data-section-id="{{ section.id }}"
+  >
+
+  {%- if mode == 'marquee_banner' -%}
+    {%- comment -%}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      MODE 1 : MARQUEE BANNER
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{%- endcomment -%}
+
+    <div class="dib__mq-wrap">
+
+      {%- comment -%} ── Media background ── {%- endcomment -%}
+      <div class="dib__media-layer dib__media-layer--pos-{{ section.settings.media_position }}">
+        {%- if section.settings.mq_media_type == 'video' and section.settings.mq_video != blank -%}
+          <video class="dib__media" src="{{ section.settings.mq_video }}" autoplay muted loop playsinline preload="metadata"></video>
+        {%- elsif section.settings.mq_image != blank -%}
+          <img class="dib__media"
+            src="{{ section.settings.mq_image | img_url: '1600x' }}"
+            srcset="{{ section.settings.mq_image | img_url: '800x' }} 800w, {{ section.settings.mq_image | img_url: '1400x' }} 1400w, {{ section.settings.mq_image | img_url: '1800x' }} 1800w"
+            sizes="100vw"
+            alt="{{ section.settings.mq_image.alt | escape }}"
+            loading="lazy"
+            width="100"
+            height="100"
+          >
+        {%- else -%}
+          <div class="dib__media-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Add an image or video in settings</span>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Fades {%- endcomment -%}
+        {%- if section.settings.side_fade -%}
+          <div class="dib__fade dib__fade--left"></div>
+          <div class="dib__fade dib__fade--right"></div>
+        {%- endif -%}
+
+        {%- comment -%} Dark overlay {%- endcomment -%}
+        <div class="dib__overlay"></div>
+      </div>
+
+      {%- comment -%} ── Content over media ── {%- endcomment -%}
+      <div class="dib__mq-content">
+
+        {%- comment -%} MARQUEE heading {%- endcomment -%}
+        {%- if section.settings.mq_heading != blank -%}
+          <div class="dib__marquee-outer dib__marquee-outer--{{ section.settings.marquee_width }}">
+            <div class="dib__marquee-track">
+              {%- assign mq_text = section.settings.mq_heading -%}
+              {%- for i in (1..8) -%}
+                <span class="dib__marquee-item">{{ mq_text }}</span>
+                <span class="dib__marquee-sep" aria-hidden="true">✦</span>
+              {%- endfor -%}
+              {%- comment -%} duplicate for seamless loop {%- endcomment -%}
+              {%- for i in (1..8) -%}
+                <span class="dib__marquee-item">{{ mq_text }}</span>
+                <span class="dib__marquee-sep" aria-hidden="true">✦</span>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- else -%}
+          <div class="dib__marquee-outer dib__marquee-outer--{{ section.settings.marquee_width }} dib__placeholder-block">
+            <div class="dib__marquee-track">
+              {%- for i in (1..8) -%}
+                <span class="dib__marquee-item">Your Heading Here</span>
+                <span class="dib__marquee-sep" aria-hidden="true">✦</span>
+              {%- endfor -%}
+              {%- for i in (1..8) -%}
+                <span class="dib__marquee-item">Your Heading Here</span>
+                <span class="dib__marquee-sep" aria-hidden="true">✦</span>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Sub-content: text + button {%- endcomment -%}
+        {%- if section.settings.mq_text != blank or section.settings.mq_btn_label != blank -%}
+          <div class="dib__mq-sub">
+            {%- if section.settings.mq_text != blank -%}
+              <p class="dib__text">{{ section.settings.mq_text }}</p>
+            {%- endif -%}
+            {%- if section.settings.mq_btn_label != blank -%}
+              <a class="dib__btn" href="{{ section.settings.mq_btn_link | default: '#' }}">
+                {{ section.settings.mq_btn_label }}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+      </div>
+    </div>
+
+  {%- else -%}
+    {%- comment -%}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      MODE 2 : TWO IMAGE BANNER
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{%- endcomment -%}
+
+    <div class="dib__two-wrap dib__two-wrap--{{ section.settings.two_flex_dir }}">
+
+      {%- for panel_index in (1..2) -%}
+        {%- if panel_index == 1 -%}
+          {%- assign p_media_type = section.settings.panel1_media_type -%}
+          {%- assign p_image      = section.settings.panel1_image -%}
+          {%- assign p_video      = section.settings.panel1_video -%}
+          {%- assign p_heading    = section.settings.panel1_heading -%}
+          {%- assign p_text       = section.settings.panel1_text -%}
+          {%- assign p_btn_label  = section.settings.panel1_btn_label -%}
+          {%- assign p_btn_link   = section.settings.panel1_btn_link -%}
+          {%- assign p_pos        = section.settings.panel1_content_pos -%}
+          {%- assign p_media_pos  = section.settings.panel1_media_pos -%}
+        {%- else -%}
+          {%- assign p_media_type = section.settings.panel2_media_type -%}
+          {%- assign p_image      = section.settings.panel2_image -%}
+          {%- assign p_video      = section.settings.panel2_video -%}
+          {%- assign p_heading    = section.settings.panel2_heading -%}
+          {%- assign p_text       = section.settings.panel2_text -%}
+          {%- assign p_btn_label  = section.settings.panel2_btn_label -%}
+          {%- assign p_btn_link   = section.settings.panel2_btn_link -%}
+          {%- assign p_pos        = section.settings.panel2_content_pos -%}
+          {%- assign p_media_pos  = section.settings.panel2_media_pos -%}
+        {%- endif -%}
+
+        <div class="dib__panel">
+
+          {%- comment -%} Media {%- endcomment -%}
+          <div class="dib__media-layer dib__media-layer--pos-{{ p_media_pos }}">
+            {%- if p_media_type == 'video' and p_video != blank -%}
+              <video class="dib__media" src="{{ p_video }}" autoplay muted loop playsinline preload="metadata"></video>
+            {%- elsif p_image != blank -%}
+              <img class="dib__media"
+                src="{{ p_image | img_url: '900x' }}"
+                srcset="{{ p_image | img_url: '600x' }} 600w, {{ p_image | img_url: '900x' }} 900w, {{ p_image | img_url: '1200x' }} 1200w"
+                sizes="(max-width:768px) 100vw, 50vw"
+                alt="{{ p_image.alt | escape }}"
+                loading="lazy"
+                width="100"
+                height="100"
+              >
+            {%- else -%}
+              <div class="dib__media-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Panel {{ panel_index }}: Add image or video</span>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.side_fade -%}
+              <div class="dib__fade dib__fade--left"></div>
+              <div class="dib__fade dib__fade--right"></div>
+            {%- endif -%}
+            <div class="dib__overlay"></div>
+          </div>
+
+          {%- comment -%} Content overlay {%- endcomment -%}
+          <div class="dib__panel-content dib__panel-content--{{ p_pos }}">
+            {%- if p_heading != blank -%}
+              <h2 class="dib__heading">{{ p_heading }}</h2>
+            {%- elsif request.design_mode -%}
+              <h2 class="dib__heading dib__placeholder-text">Panel {{ panel_index }} Heading</h2>
+            {%- endif -%}
+
+            {%- if p_text != blank -%}
+              <p class="dib__text">{{ p_text }}</p>
+            {%- elsif request.design_mode -%}
+              <p class="dib__text dib__placeholder-text">Panel {{ panel_index }} description text goes here.</p>
+            {%- endif -%}
+
+            {%- if p_btn_label != blank -%}
+              <a class="dib__btn" href="{{ p_btn_link | default: '#' }}">{{ p_btn_label }}</a>
+            {%- elsif request.design_mode -%}
+              <a class="dib__btn dib__placeholder-text" href="#">Button {{ panel_index }}</a>
+            {%- endif -%}
+          </div>
+
+        </div>
+      {%- endfor -%}
+
+    </div>
+  {%- endif -%}
+
+  </section>
+
+  <style>
+  /* ════════════════════════════════════════
+     BASE
+  ════════════════════════════════════════ */
+  .dib {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* Color schemes */
+  .dib.color-scheme-1 { --dib-text: #fff; --dib-btn-bg: #fff; --dib-btn-text: #2c1a14; --dib-overlay: rgba(0,0,0,0.25); --dib-fade: rgba(253,246,243,0.80); }
+  .dib.color-scheme-2 { --dib-text: #fff; --dib-btn-bg: #fff; --dib-btn-text: #1a1a1a; --dib-overlay: rgba(0,0,0,0.30); --dib-fade: rgba(255,255,255,0.80); }
+  .dib.color-scheme-3 { --dib-text: #2c1a14; --dib-btn-bg: #2c1a14; --dib-btn-text: #fff; --dib-overlay: rgba(242,232,227,0.20); --dib-fade: rgba(242,232,227,0.85); }
+  .dib.color-scheme-4 { --dib-text: #fdf6f3; --dib-btn-bg: #fdf6f3; --dib-btn-text: #2c1a14; --dib-overlay: rgba(44,26,20,0.40); --dib-fade: rgba(44,26,20,0.85); }
+  .dib.color-scheme-5 { --dib-text: #f5f5f5; --dib-btn-bg: #f5f5f5; --dib-btn-text: #111; --dib-overlay: rgba(0,0,0,0.45); --dib-fade: rgba(17,17,17,0.85); }
+
+  /* ── Sticky ── */
+  .dib--sticky {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  /* ════════════════════════════════════════
+     MEDIA LAYER (shared)
+  ════════════════════════════════════════ */
+  .dib__media-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .dib__media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Media position */
+  .dib__media-layer--pos-top    .dib__media { object-position: center top; }
+  .dib__media-layer--pos-center .dib__media { object-position: center center; }
+  .dib__media-layer--pos-bottom .dib__media { object-position: center bottom; }
+
+  /* Dark overlay */
+  .dib__overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--dib-overlay, rgba(0,0,0,0.28));
+    opacity: var(--overlay-opacity, 0.28);
+    pointer-events: none;
+  }
+
+  /* Placeholder */
+  .dib__media-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #e8ddd8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #7a6560;
+  }
+
+  /* Side fades */
+  .dib__fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--fade-width, 12%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .dib__fade--left  { left: 0;  background: linear-gradient(to right, var(--dib-fade, rgba(0,0,0,0.6)), transparent); }
+  .dib__fade--right { right: 0; background: linear-gradient(to left,  var(--dib-fade, rgba(0,0,0,0.6)), transparent); }
+
+  /* Shared text styles */
+  .dib__heading {
+    color: var(--dib-text, #fff);
+    font-size: clamp(24px, 5vw, 64px);
+    font-weight: 800;
+    margin: 0 0 12px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .dib__text {
+    color: var(--dib-text, #fff);
+    font-size: clamp(14px, 1.6vw, 18px);
+    margin: 0 0 18px;
+    line-height: 1.6;
+    opacity: 0.88;
+    max-width: 520px;
+  }
+  .dib__btn {
+    display: inline-block;
+    padding: 13px 32px;
+    background: var(--dib-btn-bg, #fff);
+    color: var(--dib-btn-text, #2c1a14);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: opacity 0.2s, transform 0.2s;
+    border: none;
+  }
+  .dib__btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* Placeholder styling in editor */
+  .dib__placeholder-text { opacity: 0.35 !important; font-style: italic; }
+  .dib__placeholder-block { opacity: 0.35; }
+
+  /* ════════════════════════════════════════
+     MODE 1 — MARQUEE BANNER
+  ════════════════════════════════════════ */
+  .dib__mq-wrap {
+    position: relative;
+    height: var(--banner-height, 500px);
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .dib__mq-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── Marquee ── */
+  .dib__marquee-outer {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+  }
+  .dib__marquee-outer--half {
+    max-width: 50%;
+    margin: 0 auto;
+  }
+  .dib__marquee-outer--full {
+    max-width: 100%;
+  }
+
+  .dib__marquee-track {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    gap: 0;
+    animation: dib-marquee var(--marquee-speed, 18s) linear infinite;
+    will-change: transform;
+  }
+
+  .dib__marquee-track:hover { animation-play-state: paused; }
+
+  .dib__marquee-item {
+    color: var(--dib-text, #fff);
+    font-size: clamp(28px, 5.5vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    padding: 0 20px;
+    white-space: nowrap;
+  }
+
+  .dib__marquee-sep {
+    color: var(--dib-text, #fff);
+    font-size: clamp(20px, 3vw, 40px);
+    opacity: 0.55;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  @keyframes dib-marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .dib__mq-sub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    padding: 0 20px;
+    text-align: center;
+    position: relative;
+    z-index: 3;
+  }
+
+  /* ════════════════════════════════════════
+     MODE 2 — TWO IMAGE BANNER
+  ════════════════════════════════════════ */
+  .dib__two-wrap {
+    display: flex;
+    width: 100%;
+    height: var(--banner-height, 600px);
+    min-height: 320px;
+  }
+
+  /* Flex direction */
+  .dib__two-wrap--horizontal { flex-direction: row; }
+  .dib__two-wrap--vertical   { flex-direction: column; }
+
+  .dib__panel {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* ── Content position ── */
+  .dib__panel-content {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    box-sizing: border-box;
+  }
+
+  /* Horizontal alignment */
+  .dib__panel-content--top-left,
+  .dib__panel-content--middle-left,
+  .dib__panel-content--bottom-left      { align-items: flex-start; text-align: left; }
+
+  .dib__panel-content--top-center,
+  .dib__panel-content--middle-center,
+  .dib__panel-content--bottom-center    { align-items: center; text-align: center; }
+
+  .dib__panel-content--top-right,
+  .dib__panel-content--middle-right,
+  .dib__panel-content--bottom-right     { align-items: flex-end; text-align: right; }
+
+  /* Vertical alignment */
+  .dib__panel-content--top-left,
+  .dib__panel-content--top-center,
+  .dib__panel-content--top-right        { justify-content: flex-start; }
+
+  .dib__panel-content--middle-left,
+  .dib__panel-content--middle-center,
+  .dib__panel-content--middle-right     { justify-content: center; }
+
+  .dib__panel-content--bottom-left,
+  .dib__panel-content--bottom-center,
+  .dib__panel-content--bottom-right     { justify-content: flex-end; }
+
+  /* ════════════════════════════════════════
+     RESPONSIVE
+  ════════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .dib__two-wrap--horizontal { flex-direction: column; }
+
+    .dib__panel { min-height: 300px; }
+
+    .dib__mq-wrap { height: auto; min-height: 220px; padding: 40px 0; }
+
+    .dib__marquee-outer--half { max-width: 90%; }
+
+    .dib__panel-content { padding: 20px; }
+
+    .dib__heading { font-size: clamp(20px, 7vw, 36px); }
+  }
+
+  @media (max-width: 480px) {
+    .dib__btn { padding: 11px 24px; font-size: 13px; }
+  }
+  </style>
+
+  {% schema %}
+  {
+    "name": "Image Banner",
+    "tag": "section",
+    "class": "dib-section-wrapper",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Banner Type"
+      },
+      {
+        "type": "select",
+        "id": "banner_type",
+        "label": "Banner type",
+        "options": [
+          { "value": "marquee_banner",   "label": "Marquee Banner" },
+          { "value": "two_image_banner", "label": "Two Image Banner" }
+        ],
+        "default": "marquee_banner",
+        "info": "Switch between a marquee text banner and a two-panel image/video banner."
+      },
+      {
+        "type": "header",
+        "content": "Global Options"
+      },
+      {
+        "type": "checkbox",
+        "id": "sticky_banner",
+        "label": "Sticky banner",
+        "default": false,
+        "info": "Banner stays fixed at top until the next section scrolls over it."
+      },
+      {
+        "type": "checkbox",
+        "id": "side_fade",
+        "label": "Left & right edge fade",
+        "default": false,
+        "info": "Adds a gradient fade on the left and right edges of the media."
+      },
+      {
+        "type": "range",
+        "id": "fade_width",
+        "min": 4,
+        "max": 30,
+        "step": 1,
+        "unit": "%",
+        "label": "Fade width",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "overlay_opacity",
+        "min": 0,
+        "max": 80,
+        "step": 5,
+        "unit": "%",
+        "label": "Dark overlay opacity",
+        "default": 25,
+        "info": "Darkens the background media to improve text readability."
+      },
+      {
+        "type": "range",
+        "id": "banner_height",
+        "min": 200,
+        "max": 900,
+        "step": 20,
+        "unit": "px",
+        "label": "Banner height",
+        "default": 560
+      },
+      {
+        "type": "select",
+        "id": "color_scheme",
+        "label": "Color scheme",
+        "options": [
+          { "value": "scheme-1", "label": "Warm Cream" },
+          { "value": "scheme-2", "label": "Pure White" },
+          { "value": "scheme-3", "label": "Soft Rose" },
+          { "value": "scheme-4", "label": "Dark Espresso" },
+          { "value": "scheme-5", "label": "Midnight Black" }
+        ],
+        "default": "scheme-1"
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "label": "Padding top",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "label": "Padding bottom",
+        "default": 0
+      },
+
+      {
+        "type": "header",
+        "content": "━━ MARQUEE BANNER Settings ━━"
+      },
+      {
+        "type": "select",
+        "id": "mq_media_type",
+        "label": "Media type",
+        "options": [
+          { "value": "image", "label": "Image" },
+          { "value": "video", "label": "Video" }
+        ],
+        "default": "image"
+      },
+      {
+        "type": "image_picker",
+        "id": "mq_image",
+        "label": "Background image",
+        "info": "Used when media type is Image."
+      },
+      {
+        "type": "text",
+        "id": "mq_video",
+        "label": "Background video URL",
+        "info": "Direct .mp4 URL. Used when media type is Video."
+      },
+      {
+        "type": "select",
+        "id": "media_position",
+        "label": "Media focal position",
+        "options": [
+          { "value": "top",    "label": "Top" },
+          { "value": "center", "label": "Center" },
+          { "value": "bottom", "label": "Bottom" }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "text",
+        "id": "mq_heading",
+        "label": "Marquee heading text",
+        "default": "Glow. Nourish. Repeat.",
+        "info": "This text will scroll as the marquee. Leave blank to show a placeholder in the editor."
+      },
+      {
+        "type": "select",
+        "id": "marquee_width",
+        "label": "Marquee width",
+        "options": [
+          { "value": "full", "label": "Full width" },
+          { "value": "half", "label": "Half width (centered)" }
+        ],
+        "default": "full"
+      },
+      {
+        "type": "range",
+        "id": "marquee_speed",
+        "min": 4,
+        "max": 60,
+        "step": 2,
+        "unit": "s",
+        "label": "Marquee speed (lower = faster)",
+        "default": 18
+      },
+      {
+        "type": "textarea",
+        "id": "mq_text",
+        "label": "Subtext (below marquee)",
+        "info": "Optional description shown below the marquee. Leave blank to hide."
+      },
+      {
+        "type": "text",
+        "id": "mq_btn_label",
+        "label": "Button label",
+        "info": "Leave blank to hide button."
+      },
+      {
+        "type": "url",
+        "id": "mq_btn_link",
+        "label": "Button link"
+      },
+
+      {
+        "type": "header",
+        "content": "━━ TWO IMAGE BANNER Settings ━━"
+      },
+      {
+        "type": "select",
+        "id": "two_flex_dir",
+        "label": "Panel layout direction",
+        "options": [
+          { "value": "horizontal", "label": "Side by side (horizontal)" },
+          { "value": "vertical",   "label": "Stacked (vertical)" }
+        ],
+        "default": "horizontal",
+        "info": "Choose how the two panels are arranged."
+      },
+
+      {
+        "type": "header",
+        "content": "Panel 1"
+      },
+      {
+        "type": "select",
+        "id": "panel1_media_type",
+        "label": "Panel 1 — Media type",
+        "options": [
+          { "value": "image", "label": "Image" },
+          { "value": "video", "label": "Video" }
+        ],
+        "default": "image"
+      },
+      {
+        "type": "image_picker",
+        "id": "panel1_image",
+        "label": "Panel 1 — Image"
+      },
+      {
+        "type": "text",
+        "id": "panel1_video",
+        "label": "Panel 1 — Video URL",
+        "info": "Direct .mp4 URL."
+      },
+      {
+        "type": "select",
+        "id": "panel1_media_pos",
+        "label": "Panel 1 — Media focal point",
+        "options": [
+          { "value": "top",    "label": "Top" },
+          { "value": "center", "label": "Center" },
+          { "value": "bottom", "label": "Bottom" }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "text",
+        "id": "panel1_heading",
+        "label": "Panel 1 — Heading",
+        "info": "Leave blank to hide."
+      },
+      {
+        "type": "textarea",
+        "id": "panel1_text",
+        "label": "Panel 1 — Text",
+        "info": "Leave blank to hide."
+      },
+      {
+        "type": "text",
+        "id": "panel1_btn_label",
+        "label": "Panel 1 — Button label",
+        "info": "Leave blank to hide."
+      },
+      {
+        "type": "url",
+        "id": "panel1_btn_link",
+        "label": "Panel 1 — Button link"
+      },
+      {
+        "type": "select",
+        "id": "panel1_content_pos",
+        "label": "Panel 1 — Content position",
+        "options": [
+          { "value": "top-left",      "label": "Top Left" },
+          { "value": "top-center",    "label": "Top Center" },
+          { "value": "top-right",     "label": "Top Right" },
+          { "value": "middle-left",   "label": "Middle Left" },
+          { "value": "middle-center", "label": "Middle Center" },
+          { "value": "middle-right",  "label": "Middle Right" },
+          { "value": "bottom-left",   "label": "Bottom Left" },
+          { "value": "bottom-center", "label": "Bottom Center" },
+          { "value": "bottom-right",  "label": "Bottom Right" }
+        ],
+        "default": "bottom-left"
+      },
+
+      {
+        "type": "header",
+        "content": "Panel 2"
+      },
+      {
+        "type": "select",
+        "id": "panel2_media_type",
+        "label": "Panel 2 — Media type",
+        "options": [
+          { "value": "image", "label": "Image" },
+          { "value": "video", "label": "Video" }
+        ],
+        "default": "image"
+      },
+      {
+        "type": "image_picker",
+        "id": "panel2_image",
+        "label": "Panel 2 — Image"
+      },
+      {
+        "type": "text",
+        "id": "panel2_video",
+        "label": "Panel 2 — Video URL",
+        "info": "Direct .mp4 URL."
+      },
+      {
+        "type": "select",
+        "id": "panel2_media_pos",
+        "label": "Panel 2 — Media focal point",
+        "options": [
+          { "value": "top",    "label": "Top" },
+          { "value": "center", "label": "Center" },
+          { "value": "bottom", "label": "Bottom" }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "text",
+        "id": "panel2_heading",
+        "label": "Panel 2 — Heading",
+        "info": "Leave blank to hide."
+      },
+      {
+        "type": "textarea",
+        "id": "panel2_text",
+        "label": "Panel 2 — Text",
+        "info": "Leave blank to hide."
+      },
+      {
+        "type": "text",
+        "id": "panel2_btn_label",
+        "label": "Panel 2 — Button label",
+        "info": "Leave blank to hide."
+      },
+      {
+        "type": "url",
+        "id": "panel2_btn_link",
+        "label": "Panel 2 — Button link"
+      },
+      {
+        "type": "select",
+        "id": "panel2_content_pos",
+        "label": "Panel 2 — Content position",
+        "options": [
+          { "value": "top-left",      "label": "Top Left" },
+          { "value": "top-center",    "label": "Top Center" },
+          { "value": "top-right",     "label": "Top Right" },
+          { "value": "middle-left",   "label": "Middle Left" },
+          { "value": "middle-center", "label": "Middle Center" },
+          { "value": "middle-right",  "label": "Middle Right" },
+          { "value": "bottom-left",   "label": "Bottom Left" },
+          { "value": "bottom-center", "label": "Bottom Center" },
+          { "value": "bottom-right",  "label": "Bottom Right" }
+        ],
+        "default": "bottom-right"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Image Banner — Marquee",
+        "settings": {
+          "banner_type": "marquee_banner",
+          "mq_heading": "Glow. Nourish. Repeat.",
+          "marquee_width": "full",
+          "marquee_speed": 18
+        }
+      },
+      {
+        "name": "Image Banner — Two Panel",
+        "settings": {
+          "banner_type": "two_image_banner",
+          "two_flex_dir": "horizontal",
+          "panel1_content_pos": "bottom-left",
+          "panel2_content_pos": "bottom-right"
+        }
+      }
+    ]
+  }
+  {% endschema %}
+{% endcomment %}

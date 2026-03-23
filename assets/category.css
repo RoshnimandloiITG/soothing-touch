@@ -1,0 +1,284 @@
+/* ============================================================
+   PRODUCT CATEGORY SECTION
+   ============================================================ */
+
+.product-category-section {
+  padding-top:var(--padding-top);
+  padding-bottom: var(--padding-bottom);
+}
+
+/* ---- Header ---- */
+.heading--card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.category-card {
+  position: relative;
+}
+
+.heading--card h2 {
+  margin:0;
+}
+/* ---- Media wrapper — clips the image and shows the bg color ---- */
+.category-card__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background-color: var(--card-hover-bg, #e8e8e8);
+  aspect-ratio: 3 / 4.9;
+}
+
+/* ---- Inner wrapper that shrinks on hover ---- */
+.category-card__image-wrap {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),border-radius 0.45s ease;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Image inside the wrapper */
+.category-card__image-wrap img, .category-card__image-wrap .placeholder-svg {
+    width: 100%;
+    display: block;
+    border-radius: 20px;
+    transition: transform .45s cubic-bezier(.25,.46,.45,.94);
+    object-fit: cover;
+    height: 100%;
+    aspect-ratio: 1/1.7;  
+}
+
+/* On hover: shrink the image-wrap to reveal the bg color around it */
+.category-card:hover .category-card__image-wrap {
+  transform: scale(0.76);
+  border-radius: 16px;
+ box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+
+/* Subtle zoom on the image itself while shrinking */
+.category-card:hover .category-card__image-wrap img,
+.category-card:hover .category-card__image-wrap .placeholder-svg {
+  transform: scale(1.04);
+
+}
+
+/* ============================================================
+   HOVER "VIEW" CIRCLE BUTTON
+   ============================================================ */
+
+
+
+.hover-view-btn {
+  position: absolute;
+    top: 50%;
+  left: 50%;
+  padding: 30px 26px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.25s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  /* subtle shadow so it reads on any bg color */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Appear when the card is hovered */
+.category-card:hover .hover-view-btn {
+  opacity: 1;
+}
+
+/* ============================================================
+   BOTTOM BUTTON
+   ============================================================ */
+
+.category-bottom-btn {
+    text-align: center;
+    position: absolute;
+    bottom: 18px;
+    justify-self: anchor-center;
+    background: white;
+    border-radius: 41px;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, 
+    transform 0.3s ease, 
+    visibility 0.3s ease;
+    z-index: 5;
+}
+
+.category-card:hover .category-bottom-btn {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px); /* optional smooth slide effect */
+}
+
+.category-card__image-wrap {
+  position: relative;
+  z-index: 2;
+}
+
+.hover-view-btn {
+  z-index: 5;
+}
+/* ============================================================
+   PREMIUM MULTI-ROW MARQUEE
+   ============================================================ */
+
+.category-marquee {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* each row */
+.marquee-row {
+  width: 200%;
+  overflow: hidden;
+}
+
+/* track */
+.marquee-track {
+  display: flex;
+  gap: 80px;
+  white-space: nowrap;
+  font-size: 5rem;           /* bigger text */
+  font-weight: 700;
+  color: #ffffff;            /* WHITE TEXT */
+  opacity: 0.95;             /* soft transparent */
+  animation: marqueeLeft 18s linear infinite;
+}
+
+.marquee-row--2 .marquee-track {
+  animation: marqueeRight 22s linear infinite;
+}
+
+.marquee-row--3 .marquee-track {
+  animation: marqueeLeft 26s linear infinite;
+}
+
+/* animations */
+@keyframes marqueeLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marqueeRight {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+/* ============================================================
+   MARQUEE TEXT LEFT FADE (TEXT ONLY)
+   ============================================================ */
+
+.category-marquee {
+-webkit-mask-image: linear-gradient(
+  to right,
+  transparent 0%,
+  black 15%,
+  black 85%,
+  transparent 100%
+);
+mask-image: linear-gradient(
+  to right,
+  transparent 0%,
+  black 15%,
+  black 85%,
+  transparent 100%
+);
+}
+
+/* =========================================
+CATEGORY MOBILE SLIDER
+========================================= */
+
+/* ======================================
+MOBILE CATEGORY SLIDER
+====================================== */
+/* arrows by default hidden */
+/* arrows hidden by default */
+.category-slider-arrows{
+display:none;
+}
+
+@media screen and (max-width:740px){
+
+.mobile-slider-enabled .grid{
+display:flex !important;
+flex-wrap:nowrap !important;
+overflow-x:auto;
+gap:16px;
+scroll-snap-type:x mandatory;
+-webkit-overflow-scrolling:touch;
+}
+
+.mobile-slider-enabled .grid__item{
+flex:0 0 100%;
+max-width:100%;
+scroll-snap-align:start;
+}
+
+.mobile-slider-enabled .category-slider-arrows{
+display:flex;
+gap:10px;
+justify-content:flex-end;
+margin-bottom:20px;
+}
+
+.mobile-slider-enabled .grid::-webkit-scrollbar{
+  display:none;
+}
+}
+.product-category-section .grid{
+scroll-behavior:smooth;
+}
+
+.cat-arrow{
+width:42px;
+height:42px;
+border-radius:50%;
+border:1px solid rgba(0,0,0,0.15);
+background:var(--arrow-bg);
+color:var(--arrow-color);
+font-size:22px;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:all .25s ease;
+}
+
+.cat-arrow:hover{
+background:var(--arrow-color);
+color:var(--arrow-bg);
+}
+.cat-arrow:disabled{
+opacity:.4;
+cursor:not-allowed;
+pointer-events:none;
+}

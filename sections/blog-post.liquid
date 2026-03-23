@@ -1,0 +1,676 @@
+{% comment %}
+  ═══════════════════════════════════════════════
+  BLOG POSTS SECTION — "The Soothing Journal"
+  - Auto-pulls from selected blog
+  - Cards: image fills full area, text card at bottom
+  - Hover: text card slides UP, excerpt reveals
+  - Mobile: Swiper slider OR stacked
+  ═══════════════════════════════════════════════
+{% endcomment %}
+
+{%- liquid
+  assign blog_handle = section.settings.blog
+  assign post_limit = section.settings.post_count | default: 3
+  assign scheme = section.settings.color_scheme
+  assign author_prefix = section.settings.author_prefix | default: 'By'
+-%}
+
+{%- if section.settings.mobile_layout == 'slider' -%}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+{%- endif -%}
+
+<section id="blog-posts-{{ section.id }}" class="bp-section color-{{ scheme }} gradient">
+  <div class="page-width">
+  {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+    <div class="bp-header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="bp-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="bp-subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div
+    class="bp-wrap{% if section.settings.mobile_layout == 'slider' %} bp-wrap--slider{% endif %}"
+    id="bpSwiper-{{ section.id }}"
+  >
+
+    <div class="grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--2-col-tablet grid--1-col{% if section.settings.mobile_layout == 'slider' %} swiper-wrapper{% endif %}">
+      {%- if blog_handle != blank and blogs[blog_handle] != blank -%}
+        {%- for article in blogs[blog_handle].articles limit: post_limit -%}
+          <div class="bp-card grid__item {% if section.settings.mobile_layout == 'slider' %} swiper-slide{% endif %}">
+            <div class="bp-card__img-wrap">
+              {%- if article.image != blank -%}
+                <img
+                  class="bp-card__img"
+                  src="{{ article.image | img_url: '800x900', crop: 'center' }}"
+                  srcset="
+                    {{ article.image | img_url: '400x450', crop: 'center' }} 400w,
+                    {{ article.image | img_url: '700x800', crop: 'center' }} 700w,
+                    {{ article.image | img_url: '900x1000', crop: 'center' }} 900w
+                  "
+                  sizes="(max-width: 600px) 90vw, 33vw"
+                  alt="{{ article.image.alt | default: article.title | escape }}"
+                  loading="lazy"
+                  width="800"
+                  height="900"
+                >
+              {%- else -%}
+                <div class="bp-card__img-placeholder">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="56"
+                    height="56"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="0.8"
+                    opacity="0.25"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+              {%- endif -%}
+            </div>
+
+            <div class="bp-card__text">
+              <div class="bp-card__meta">
+                {%- if section.settings.show_author -%}
+                  <span class="bp-card__author">
+                    {{- author_prefix }}
+                    {{ article.author -}}
+                  </span>
+                  <span class="bp-card__sep" aria-hidden="true">|</span>
+                {%- endif -%}
+                {%- if section.settings.show_date -%}
+                  <time class="bp-card__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                    {{ article.published_at | date: section.settings.date_format }}
+                  </time>
+                {%- endif -%}
+              </div>
+              <a class="bp-card__title-link" href="{{ article.url }}">
+                <h3 class="bp-card__title">{{ article.title }}</h3>
+              </a>
+              <div class="bp-card__excerpt">
+                {%- if article.excerpt_or_content != blank -%}
+                  <p>{{ article.excerpt_or_content | strip_html | truncate: section.settings.excerpt_length }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+
+            <a class="bp-card__overlay-link" href="{{ article.url }}" aria-label="{{ article.title | escape }}"></a>
+          </div>
+        {%- endfor -%}
+
+      {%- else -%}
+        {%- for i in (1..post_limit) -%}
+          <div class="bp-card bp-card--placeholder{% if section.settings.mobile_layout == 'slider' %} swiper-slide{% endif %}">
+            <div class="bp-card__img-wrap">
+              <div class="bp-card__img-placeholder">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="56"
+                  height="56"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="0.8"
+                  opacity="0.25"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+            </div>
+            <div class="bp-card__text">
+              <div class="bp-card__meta">
+                <span class="bp-card__author">{{ author_prefix }} Your Brand</span>
+                <span class="bp-card__sep" aria-hidden="true">|</span>
+                <span class="bp-card__date">{{ 'now' | date: '%b %-d, %Y' }}</span>
+              </div>
+              <h3 class="bp-card__title">Blog Post Title {{ i }}</h3>
+              <div class="bp-card__excerpt">
+                <p>Select a blog in section settings to display real articles here.</p>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.mobile_layout == 'slider' -%}
+      <div class="bp-pagination swiper-pagination" id="bpPagination-{{ section.id }}"></div>
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.show_view_all and blog_handle != blank -%}
+    <div class="bp-footer">
+      <a class="bp-btn" href="{{ blogs[blog_handle].url }}">
+        {{ section.settings.view_all_label | default: 'View All Posts' }}
+      </a>
+    </div>
+  {%- endif -%}
+  </div>
+</section>
+
+<style>
+
+  /* ══════════ SECTION ══════════ */
+  #blog-posts-{{ section.id }} {
+    background: var(--bg);
+    color: var(--text);
+    padding-top : {{ section.settings.padding_top }}px ;
+    padding-bottom : {{ section.settings.padding_bottom }}px;
+    box-sizing: border-box;
+  }
+
+  /* ══════════ HEADER ══════════ */
+  #blog-posts-{{ section.id }} .bp-header {
+    text-align: {{ section.settings.heading_align }};
+    margin: 0 auto {{ section.settings.header_gap }}px;
+    max-width: 1400px;
+  }
+
+  /* ══════════ WRAP + GRID ══════════ */
+  #blog-posts-{{ section.id }} .bp-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  #blog-posts-{{ section.id }} .bp-card {
+    position: relative;
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--card-shadow);
+    cursor: pointer;
+    /* aspect-ratio drives card height — same on load and on hover */
+    aspect-ratio: {{ section.settings.image_ratio }};
+    transition: box-shadow 0.4s ease;
+  }
+  #blog-posts-{{ section.id }} .bp-card:hover {
+    box-shadow: 0 12px 40px var(--card-shadow-hover);
+  }
+
+  /* IMAGE — fills entire card absolutely */
+  #blog-posts-{{ section.id }} .bp-card__img-wrap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  #blog-posts-{{ section.id }} .bp-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  #blog-posts-{{ section.id }} .bp-card:hover .bp-card__img {
+    transform: scale(1.05);
+  }
+  #blog-posts-{{ section.id }} .bp-card__img-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--placeholder-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* TEXT CARD — absolute, anchored bottom, slides up on hover */
+  #blog-posts-{{ section.id }} .bp-card__text {
+    position: absolute;
+    left: {{ section.settings.text_inset }}px;
+    right: {{ section.settings.text_inset }}px;
+    bottom: {{ section.settings.text_inset }}px;
+    border-radius: {{ section.settings.card_radius }}px;
+    padding: 14px 16px 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.14);
+    z-index: 2;
+    transform: translateY(0);
+    /* smooth ease-in-out for both up and down */
+    transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* META */
+  #blog-posts-{{ section.id }} .bp-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+    flex-wrap: wrap;
+    line-height: 1.3;
+  }
+  #blog-posts-{{ section.id }} .bp-card__sep { opacity: 0.35; }
+
+  /* TITLE */
+  #blog-posts-{{ section.id }} .bp-card__title-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  
+
+  /* EXCERPT — hidden, expands as text card slides up */
+  #blog-posts-{{ section.id }} .bp-card__excerpt {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    transition:
+      max-height 0.42s cubic-bezier(0.4,0,0.2,1),
+      opacity    0.3s  ease 0.07s,
+      margin-top 0.42s cubic-bezier(0.4,0,0.2,1);
+  }
+ 
+
+  /* ── HOVER STATE ──
+     Text card slides up exactly the height of the excerpt (80px).
+     Excerpt expands to fill that same 80px. Perfectly in sync. */
+  #blog-posts-{{ section.id }} .bp-card:hover .bp-card__text {
+    transform: translateY(-3px);
+  }
+  #blog-posts-{{ section.id }} .bp-card:hover .bp-card__excerpt {
+    max-height: 80px;
+    opacity: 1;
+  }
+
+  /* FULL-CARD LINK OVERLAY */
+  #blog-posts-{{ section.id }} .bp-card__overlay-link {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+  }
+
+  /* ══════════ FOOTER BUTTON ══════════ */
+  #blog-posts-{{ section.id }} .bp-footer { text-align: center; margin-top: 36px; }
+  #blog-posts-{{ section.id }} .bp-btn {
+    display: inline-block;
+    padding: 12px 34px;
+    background: transparent;
+    color: var(--btn-text);
+    border: 1.5px solid var(--btn-border);
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    transition: background 0.25s, color 0.25s, transform 0.2s;
+  }
+  #blog-posts-{{ section.id }} .bp-btn:hover {
+    background: var(--btn-text);
+    color: var(--bg);
+    transform: translateY(-1px);
+  }
+
+  /* ══════════ SWIPER PAGINATION ══════════ */
+  #blog-posts-{{ section.id }} .bp-pagination {
+    display: none;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 20px;
+    position: static !important;
+  }
+  #blog-posts-{{ section.id }} .bp-pagination .swiper-pagination-bullet {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--text);
+    opacity: 0.22;
+    margin: 0 !important;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  #blog-posts-{{ section.id }} .bp-pagination .swiper-pagination-bullet-active {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+
+  /* ══════════ RESPONSIVE ══════════ */
+  @media (max-width: 900px) {
+    #blog-posts-{{ section.id }} .bp-grid:not(.swiper-wrapper) {
+      grid-template-columns: repeat({{ section.settings.columns_tablet | default: 2 }}, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    #blog-posts-{{ section.id }} {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    /* ── STACKED: one column ── */
+    #blog-posts-{{ section.id }} .bp-grid:not(.swiper-wrapper) {
+      grid-template-columns: 1fr;
+    }
+
+    /* ── SLIDER: Swiper setup ── */
+    #blog-posts-{{ section.id }} .bp-wrap--slider {
+      overflow: hidden;
+      padding-bottom: 36px;
+    }
+    #blog-posts-{{ section.id }} .bp-wrap--slider .swiper-wrapper {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch; /* all slides same height */
+    }
+    #blog-posts-{{ section.id }} .bp-wrap--slider .swiper-slide {
+      /* width set by JS slidesPerView:'auto'.
+         height = same as desktop via aspect-ratio — NO override needed */
+      width: 78vw;
+      flex-shrink: 0;
+      height: auto; /* let aspect-ratio do the work */
+    }
+    #blog-posts-{{ section.id }} .bp-pagination { display: flex; }
+
+    /* ── CARD on mobile: keep aspect-ratio, just disable hover slide ── */
+    #blog-posts-{{ section.id }} .bp-card__text {
+      /* No translateY on touch — text always visible at bottom */
+      transition: none !important;
+    }
+    #blog-posts-{{ section.id }} .bp-card:hover .bp-card__text,
+    #blog-posts-{{ section.id }} .bp-card:active .bp-card__text {
+      transform: translateY(0) !important;
+    }
+    /* Always show excerpt on mobile */
+    #blog-posts-{{ section.id }} .bp-card__excerpt {
+      max-height: 72px !important;
+      opacity: 1 !important;
+      margin-top: 8px !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+{%- if section.settings.mobile_layout == 'slider' -%}
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    (function () {
+      var BREAKPOINT = 600;
+
+      function initBpSwiper() {
+        var wrap = document.getElementById('bpSwiper-{{ section.id }}');
+        if (!wrap) return;
+
+        function setup() {
+          var isMobile = window.innerWidth <= BREAKPOINT;
+
+          if (isMobile && !wrap._swiper) {
+            wrap._swiper = new Swiper('#bpSwiper-{{ section.id }}', {
+              slidesPerView: 'auto',
+              spaceBetween: {{ section.settings.gap }},
+              grabCursor: true,
+              watchOverflow: true,
+              pagination: {
+                el: '#bpPagination-{{ section.id }}',
+                clickable: true,
+              },
+            });
+          } else if (!isMobile && wrap._swiper) {
+            wrap._swiper.destroy(true, true);
+            wrap._swiper = null;
+          }
+        }
+
+        setup();
+
+        /* debounced resize */
+        var timer;
+        window.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(setup, 150);
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBpSwiper);
+      } else {
+        initBpSwiper();
+      }
+
+      document.addEventListener('shopify:section:load', function (e) {
+        if (e.detail.sectionId === '{{ section.id }}') {
+          var wrap = document.getElementById('bpSwiper-{{ section.id }}');
+          if (wrap && wrap._swiper) { wrap._swiper.destroy(true, true); wrap._swiper = null; }
+          initBpSwiper();
+        }
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Blog Posts",
+  "tag": "section",
+  "class": "blog-posts-wrapper",
+  "settings": [
+    { "type": "header", "content": "Section Header" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The Soothing Journal" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "info": "Leave blank to hide." },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 22,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading max size",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "header_gap",
+      "min": 12,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "label": "Space below header",
+      "default": 36
+    },
+    { "type": "header", "content": "Blog Source" },
+    { "type": "blog", "id": "blog", "label": "Blog" },
+    { "type": "range", "id": "post_count", "min": 1, "max": 12, "step": 1, "label": "Number of posts", "default": 3 },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    { "type": "text", "id": "author_prefix", "label": "Author prefix", "default": "By" },
+    { "type": "checkbox", "id": "show_date", "label": "Show date", "default": true },
+    {
+      "type": "select",
+      "id": "date_format",
+      "label": "Date format",
+      "options": [
+        { "value": "%b %-d, %Y", "label": "Jul 20, 2025" },
+        { "value": "%-d %b %Y", "label": "20 Jul 2025" },
+        { "value": "%B %-d, %Y", "label": "July 20, 2025" },
+        { "value": "%Y-%m-%d", "label": "2025-07-20" }
+      ],
+      "default": "%b %-d, %Y"
+    },
+    {
+      "type": "range",
+      "id": "excerpt_length",
+      "min": 40,
+      "max": 200,
+      "step": 10,
+      "label": "Excerpt character limit",
+      "default": 100,
+      "info": "Hidden on desktop until hover. Always visible on mobile."
+    },
+    { "type": "header", "content": "Card Style" },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Card aspect ratio",
+      "options": [
+        { "value": "4/3", "label": "Landscape 4:3" },
+        { "value": "3/2", "label": "Landscape 3:2" },
+        { "value": "1/1", "label": "Square" },
+        { "value": "3/4", "label": "Portrait 3:4" },
+        { "value": "4/5", "label": "Portrait 4:5" }
+      ],
+      "default": "3/4"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_inset",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Text card inset from edges",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 12,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "label": "Title max size",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "700"
+    },
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Columns — desktop",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_tablet",
+      "label": "Columns — tablet",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        { "value": "stacked", "label": "Stacked" },
+        { "value": "slider", "label": "Slider (Swiper)" }
+      ],
+      "default": "slider"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 20
+    },
+    { "type": "header", "content": "View All Button" },
+    { "type": "checkbox", "id": "show_view_all", "label": "Show button", "default": false },
+    { "type": "text", "id": "view_all_label", "label": "Button label", "default": "View All Posts" },
+    { "type": "header", "content": "Color Scheme" },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+    },
+    { "type": "header", "content": "Spacing" },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Side padding",
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog Posts",
+      "settings": {
+        "heading": "The Soothing Journal",
+        "post_count": 3,
+        "columns_desktop": 3,
+        "mobile_layout": "slider"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,839 @@
+{% comment %}
+  Instagram Feed Section - "Follow the Glow"
+  Features:
+  - Dynamic blocks (image or video per block)
+  - Hover overlay with text + cart icon per block
+  - SVG heading icon customizable
+  - Follow Us button with settings
+  - Responsive: stacked or slider mode on mobile
+{% endcomment %}
+
+{% comment %} {{ 'instagram-feed.css' | asset_url | stylesheet_tag }} {% endcomment %}
+
+<section
+  class="insta-feed-section color-{{section.settings.color_scheme }} gradient"
+  id="insta-feed-{{ section.id }}"
+>
+  <div class="page-width">
+    {%- comment -%} ── TOP HEADER ── {%- endcomment -%}
+    <div class="{{ section.settings.heading_alignment }} insta-feed__header">
+      {% if section.settings.heading != blank %}
+        <h2 class="insta-feed__title">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <p class="insta-feed__sub">{{ section.settings.subheading }}</p>
+      {% endif %}
+
+      {% if section.settings.show_instagram_handle %}
+        <a
+          class="insta-feed__handle"
+          href="https://instagram.com/{{ section.settings.instagram_handle | remove: '@' }}"
+          target="_blank"
+          rel="noopener"
+          aria-label="Instagram"
+        >
+          {%- if section.settings.instagram_icon_svg != blank -%}
+            {{ section.settings.instagram_icon_svg }}
+          {%- else -%}
+            <svg
+              class="insta-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          {%- endif -%}
+          <span>{{ section.settings.instagram_handle }}</span>
+        </a>
+      {% endif %}
+    </div>
+
+    {%- comment -%} ── FEED GRID ── {%- endcomment -%}
+    <div
+      class="insta-feed__grid{% if section.settings.mobile_layout == 'slider' %} insta-feed__grid--slider{% endif %}"
+      id="instaGrid-{{ section.id }}"
+    >
+      {%- for block in section.blocks -%}
+        {%- assign media_type = block.settings.media_type -%}
+        <div
+          class="insta-feed__item"
+          {{ block.shopify_attributes }}
+          data-block-id="{{ block.id }}"
+        >
+          {%- comment -%} Media {%- endcomment -%}
+          <div class="insta-feed__media-wrap">
+            {%- if media_type == 'video' and block.settings.video != blank -%}
+              <video
+                class="insta-feed__media"
+                src="{{ block.settings.video }}"
+                autoplay
+                loop
+                muted
+                playsinline
+                preload="metadata"
+              ></video>
+            {%- elsif block.settings.image != blank -%}
+              <img
+                class="insta-feed__media"
+                src="{{ block.settings.image | img_url: '600x800', crop: 'center' }}"
+                srcset="
+                  {{ block.settings.image | img_url: '400x530', crop: 'center' }} 400w,
+                  {{ block.settings.image | img_url: '600x800', crop: 'center' }} 600w
+                "
+                sizes="(max-width: 768px) 50vw, 20vw"
+                alt="{{ block.settings.image.alt | default: block.settings.hover_text | escape }}"
+                loading="lazy"
+                width="600"
+                height="800"
+              >
+            {%- else -%}
+              <div class="insta-feed__placeholder">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#ccc"
+                  stroke-width="1.5"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+              </div>
+            {%- endif -%}
+
+            {%- comment -%} Hover Overlay {%- endcomment -%}
+            <div class="insta-feed__overlay color-{{section.settings.color_scheme_2 }} gradient" aria-hidden="true">
+              <div class="insta-feed__overlay-inner">
+                {%- if block.settings.cart_product != blank -%}
+                  <button
+                    class="insta-feed__cart-btn"
+                    data-product-handle="{{ block.settings.cart_product.handle }}"
+                    aria-label="Add to cart"
+                    title="{{ block.settings.hover_product_name | default: 'View product' }}"
+                  >
+                    {%- if block.settings.cart_icon_svg != blank -%}
+                      {{ block.settings.cart_icon_svg }}
+                    {%- else -%}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                      </svg>
+                    {%- endif -%}
+                  </button>
+                {%- endif -%}
+
+                {%- if block.settings.hover_product_name != blank -%}
+                  <p class="insta-feed__hover-name">{{ block.settings.hover_product_name }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.hover_price != blank -%}
+                  <p class="insta-feed__hover-price">{{ block.settings.hover_price }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.hover_text != blank -%}
+                  <p class="insta-feed__hover-text">{{ block.settings.hover_text }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      {%- else -%}
+        <p class="insta-feed__empty">Add blocks to populate the feed.</p>
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} ── MOBILE SLIDER DOTS ── {%- endcomment -%}
+    {% if section.settings.mobile_layout == 'slider' and section.blocks.size > 0 %}
+      <div class="insta-feed__dots" id="instaDots-{{ section.id }}" aria-hidden="true">
+        {%- for block in section.blocks -%}
+          <button
+            class="insta-feed__dot{% if forloop.index0 == 0 %} active{% endif %}"
+            data-index="{{ forloop.index0 }}"
+            aria-label="Slide {{ forloop.index }}"
+          ></button>
+        {%- endfor -%}
+      </div>
+    {% endif %}
+
+    {%- comment -%} ── FOLLOW BUTTON ── {%- endcomment -%}
+    {% if section.settings.show_follow_button %}
+      <div class="insta-feed__follow-wrap">
+        <a
+          class="insta-feed__follow-btn {% if  section.settings.button_type != "link" %} button {{ section.settings.button_type }} {% endif %} {% if  section.settings.button_type == "link" %}{{ section.settings.button_type }} {% endif %}"
+          href="https://instagram.com/{{ section.settings.instagram_handle | remove: '@' }}"
+          target="_blank"
+          rel="noopener"
+        >
+          {{ section.settings.follow_button_text | default: 'Follow Us' }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+            /* ───────────────────────────────────────────
+              INSTAGRAM FEED SECTION STYLES
+            ─────────────────────────────────────────── */
+            #insta-feed-{{ section.id }} {
+              padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+              font-family: inherit;
+            }
+
+            /* Header */
+            .insta-feed__header {;
+              margin-bottom: 32px;
+              padding: 0 16px;
+            }
+
+
+            #insta-feed-{{ section.id }} .insta-feed__handle {
+              display: inline-flex;
+              align-items: center;
+              gap: 7px;
+              text-decoration: none;
+              transition: opacity 0.2s;
+              color:rgb(var(--color-foreground));
+            }
+
+           .insta-feed__handle:hover {
+              opacity: 0.7;
+            }
+
+             .insta-feed__handle svg,
+            .insta-feed__handle .insta-icon {
+              flex-shrink: 0;
+            }
+
+            /* Grid */
+            #insta-feed-{{ section.id }} .insta-feed__grid {
+              display: grid;
+              grid-template-columns: repeat({{ section.blocks.size | at_most: 5 }}, 1fr);
+              gap: {{ section.settings.grid_gap }}px;
+              padding: 0 {{ section.settings.grid_padding }}px;
+              max-width: {{ section.settings.max_width }}px;
+              margin: 0 auto;
+            }
+
+            /* Item */
+            #insta-feed-{{ section.id }} .insta-feed__item {
+              position: relative;
+              border-radius: {{ section.settings.border_radius }}px;
+              overflow: hidden;
+            }
+
+            /* Media Wrap */
+            #insta-feed-{{ section.id }} .insta-feed__media-wrap {
+              position: relative;
+              width: 100%;
+              aspect-ratio: 3 / 5;
+              overflow: hidden;
+              border-radius: {{ section.settings.border_radius }}px;
+            }
+
+            /* Media */
+            #insta-feed-{{ section.id }} .insta-feed__media {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              display: block;
+              transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+        #insta-feed-{{ section.id }} .insta-feed__item{
+          max-width:238px;
+        }
+
+        #insta-feed-{{ section.id }} .insta-feed__media-wrap{
+          max-height:423px;
+        }
+            #insta-feed-{{ section.id }} .insta-feed__item:hover .insta-feed__media {
+              transform: scale(1.06);
+            }
+
+            /* Placeholder */
+            #insta-feed-{{ section.id }} .insta-feed__placeholder {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            /* Overlay */
+            #insta-feed-{{ section.id }} .insta-feed__overlay {
+              position: absolute;
+              inset: 0;
+              display: flex;
+              align-items: flex-end;
+              justify-content: flex-start;
+              padding: 16px;
+              opacity: 0;
+              transition: opacity 0.35s ease;
+              border-radius: {{ section.settings.border_radius }}px;
+            }
+
+            #insta-feed-{{ section.id }} .insta-feed__item:hover .insta-feed__overlay {
+              opacity: 1;
+            }
+
+            #insta-feed-{{ section.id }} .insta-feed__overlay-inner {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 6px;
+              width: 100%;
+              padding: 0px 18px;
+            }
+
+            /* Cart button */
+            #insta-feed-{{ section.id }} .insta-feed__cart-btn {
+              position: absolute;
+              top: 30px;
+              right: 30px;
+              border: none;
+              border-radius: 50%;
+              width: 40px;
+              height: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+            #insta-feed-{{ section.id }} .insta-feed__cart-btn:hover {
+              transform: scale(1.1);
+              box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+                      }
+            #insta-feed-{{ section.id }} .insta-feed__cart-btn svg{
+              fill: {{ section.settings.cart_icon_color }};
+              stroke: {{ section.settings.cart_icon_color }};
+            }
+            #insta-feed-{{ section.id }} .insta-feed__cart-btn{
+              background: {{ section.settings.cart_icon_bg }};
+              border-radius:50%;
+              padding:8px;
+            }
+            #insta-feed-{{ section.id }} .insta-feed__overlay{
+              background:linear-gradient(
+              to top,
+              rgba(0,0,0,0.35) 0%,
+              rgba(0,0,0,0.15) 40%,
+              rgba(0,0,0,0) 70%
+            );
+            }
+            /* Hover text */
+            #insta-feed-{{ section.id }} .insta-feed__hover-name {
+              font-size: 14px;
+              font-weight: 600;
+              margin: 0;
+              line-height: 1.3;
+            }
+
+            #insta-feed-{{ section.id }} .insta-feed__hover-price {
+              font-size: 14px;
+              margin: 0;
+            }
+
+            #insta-feed-{{ section.id }} .insta-feed__hover-text {
+              font-size: 12px;
+              margin: 0;
+              opacity: 0.8;
+              line-height: 1.4;
+            }
+
+            /* Dots */
+            #insta-feed-{{ section.id }} .insta-feed__dots {
+              display: none;
+              justify-content: center;
+              gap: 7px;
+              margin-top: 20px;
+            }
+
+            #insta-feed-{{ section.id }} .insta-feed__dot {
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              border: 1px solid rgb(var(--color-foreground));
+              background:rgb(var(--color-background));
+              cursor: pointer;
+              padding: 0;
+              transition: background 0.2s, transform 0.2s;
+            }
+
+            #insta-feed-{{ section.id }} .insta-feed__dot.active {
+              background:rgb(var(--color-foreground));
+              transform: scale(1.25);
+            }
+
+            /* Follow button */
+            #insta-feed-{{ section.id }} .insta-feed__follow-wrap {
+              text-align: center;
+              margin-top: 32px;
+            }
+
+
+            /* Empty state */
+            #insta-feed-{{ section.id }} .insta-feed__empty {
+              text-align: center;
+              padding: 40px;
+              grid-column: 1 / -1;
+            }
+
+            /* ───────────────────────────────────────────
+              RESPONSIVE
+            ─────────────────────────────────────────── */
+            @media (max-width: 768px) {
+              /* STACKED layout */
+              #insta-feed-{{ section.id }} .insta-feed__grid:not(.insta-feed__grid--slider) {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding: 0 12px;
+              }
+
+              /* SLIDER layout */
+              #insta-feed-{{ section.id }} .insta-feed__grid--slider {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                gap: 12px;
+                padding: 0 16px;
+                scroll-behavior: smooth;
+              }
+
+              #insta-feed-{{ section.id }} .insta-feed__grid--slider::-webkit-scrollbar {
+                display: none;
+              }
+
+              #insta-feed-{{ section.id }} .insta-feed__grid--slider .insta-feed__item {
+                flex: 0 0 calc(50% - 6px);
+                scroll-snap-align: start;
+                min-width: calc(50% - 6px);
+              }
+
+              #insta-feed-{{ section.id }} .insta-feed__dots {
+                display: flex;
+              }
+
+              /* Overlay always visible on touch devices */
+              @media (hover: none) {
+                #insta-feed-{{ section.id }} .insta-feed__overlay {
+                  opacity: 1;
+                }
+              }
+            }
+
+            @media (max-width: 480px) {
+              #insta-feed-{{ section.id }} .insta-feed__grid:not(.insta-feed__grid--slider) {
+                grid-template-columns: 1fr;
+              }
+
+              #insta-feed-{{ section.id }} .insta-feed__grid--slider .insta-feed__item {
+                flex: 0 0 calc(80% - 6px);
+                min-width: calc(80% - 6px);
+              }
+            }
+</style>
+
+<script>
+  (function () {
+    const sectionEl = document.getElementById('insta-feed-{{ section.id }}');
+    if (!sectionEl) return;
+
+    /* ── Cart add via AJAX ── */
+    sectionEl.addEventListener('click', function (e) {
+      const btn = e.target.closest('.insta-feed__cart-btn');
+      if (!btn) return;
+      const handle = btn.dataset.productHandle;
+      if (!handle) return;
+      e.preventDefault();
+
+      /* Fetch variant id then add to cart */
+      fetch('/products/' + handle + '.js')
+        .then((r) => r.json())
+        .then((product) => {
+          const variantId = product.variants[0].id;
+          return fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: variantId, quantity: 1 }),
+          });
+        })
+        .then((r) => r.json())
+        .then(() => {
+          /* Trigger cart refresh - works with most themes */
+          document.dispatchEvent(new CustomEvent('cart:refresh'));
+          /* Also try drawer open */
+          document.dispatchEvent(new CustomEvent('cart:open'));
+          /* Fallback: mini cart update */
+          const cartCount = document.querySelectorAll('.cart-count, .cart__count, [data-cart-count]');
+          cartCount.forEach((el) => {
+            fetch('/cart.js')
+              .then((r) => r.json())
+              .then((cart) => {
+                el.textContent = cart.item_count;
+              });
+          });
+          btn.style.transform = 'scale(1.2)';
+          setTimeout(() => (btn.style.transform = ''), 300);
+        })
+        .catch((err) => console.warn('Cart add failed:', err));
+    });
+
+    /* ── Mobile Slider Dots ── */
+    const grid = sectionEl.querySelector('.insta-feed__grid--slider');
+    const dots = sectionEl.querySelectorAll('.insta-feed__dot');
+
+    if (grid && dots.length) {
+      /* Dot click → scroll */
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+          const items = grid.querySelectorAll('.insta-feed__item');
+          if (items[i]) {
+            grid.scrollTo({ left: items[i].offsetLeft - grid.offsetLeft - 16, behavior: 'smooth' });
+          }
+        });
+      });
+
+      /* Scroll → update dots */
+      let scrollTimer;
+      grid.addEventListener('scroll', () => {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(() => {
+          const items = grid.querySelectorAll('.insta-feed__item');
+          let closest = 0;
+          let minDist = Infinity;
+          items.forEach((item, i) => {
+            const dist = Math.abs(item.getBoundingClientRect().left - grid.getBoundingClientRect().left);
+            if (dist < minDist) {
+              minDist = dist;
+              closest = i;
+            }
+          });
+          dots.forEach((d, i) => d.classList.toggle('active', i === closest));
+        }, 80);
+      });
+    }
+
+    const followBtn = document.querySelector('#insta-feed-{{ section.id }} .insta-feed__follow-btn');
+
+    if (followBtn) {
+      const isPrimary = followBtn.classList.contains('button--primary');
+      const isSecondary = followBtn.classList.contains('button--secondary');
+
+      followBtn.addEventListener('mouseenter', () => {
+        if (isPrimary) {
+          followBtn.classList.replace('button--primary', 'button--secondary');
+        }
+
+        if (isSecondary) {
+          followBtn.classList.replace('button--secondary', 'button--primary');
+        }
+      });
+
+      followBtn.addEventListener('mouseleave', () => {
+        if (isPrimary) {
+          followBtn.classList.replace('button--secondary', 'button--primary');
+        }
+
+        if (isSecondary) {
+          followBtn.classList.replace('button--primary', 'button--secondary');
+        }
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Instagram Feed",
+  "tag": "section",
+  "class": "insta-feed-section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_2",
+      "label": "Color scheme 2"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Follow the Glow"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "See how our customers are embracing self-care with Soothing Touch"
+    },
+        {
+      "type": "text_alignment",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "default":"center"
+    },
+    {
+      "type": "header",
+      "content": "Instagram Handle"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_instagram_handle",
+      "label": "Show Instagram handle",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "instagram_handle",
+      "label": "Instagram handle",
+      "default": "@soothingtouchproducts",
+      "info": "Include or omit the @ symbol"
+    },
+    {
+      "type": "html",
+      "id": "instagram_icon_svg",
+      "label": "Custom Instagram icon SVG",
+      "info": "Paste custom SVG code. Leave blank for default icon."
+    },
+    {
+      "type": "header",
+      "content": "Cart Icon Style"
+    },
+    {
+      "type": "color",
+      "id": "cart_icon_color",
+      "label": "Cart icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "cart_icon_bg",
+      "label": "Cart icon background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Follow Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_follow_button",
+      "label": "Show Follow Us button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "follow_button_text",
+      "label": "Button text",
+      "default": "Follow Us"
+    },
+    {
+      "type": "select",
+      "id": "button_type",
+      "label": "Button type",
+      "options": [
+        {
+          "value": "button--primary",
+          "label": "Primary button"
+        },
+        {
+          "value": "button--secondary",
+          "label": "Secondary button"
+        },
+        {
+          "value": "link",
+          "label": "Outline button"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Layout & Spacing"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 900,
+      "max": 1800,
+      "step": 50,
+      "label": "Max content width (px)",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 4,
+      "max": 30,
+      "step": 2,
+      "label": "Grid gap (px)",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "grid_padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "label": "Side padding (px)",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "label": "Image border radius (px)",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "label": "Section padding top (px)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "label": "Section padding bottom (px)",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Mobile Layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        { "value": "stacked", "label": "Stacked grid (2 columns)" },
+        { "value": "slider", "label": "Horizontal slider" }
+      ],
+      "default": "slider",
+      "info": "Slider shows dots and swipeable cards like the screenshot."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feed_item",
+      "name": "Feed Item",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Media"
+        },
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video", "label": "Video" }
+          ],
+          "default": "image",
+          "info": "Choose Image or Video for this feed slot."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Used when media type is Image."
+        },
+        {
+          "type": "text",
+          "id": "video",
+          "label": "Video URL",
+          "info": "Direct .mp4 or CDN video URL. Used when media type is Video."
+        },
+        {
+          "type": "header",
+          "content": "Hover Overlay"
+        },
+        {
+          "type": "text",
+          "id": "hover_product_name",
+          "label": "Product name (overlay)",
+          "info": "e.g. Dead Sea Salt Scrub"
+        },
+        {
+          "type": "text",
+          "id": "hover_price",
+          "label": "Price (overlay)",
+          "info": "e.g. $18.99"
+        },
+        {
+          "type": "text",
+          "id": "hover_text",
+          "label": "Extra overlay text",
+          "info": "Optional description line."
+        },
+        {
+          "type": "header",
+          "content": "Cart Icon"
+        },
+        {
+          "type": "product",
+          "id": "cart_product",
+          "label": "Linked product",
+          "info": "Select a product to enable the Add to Cart bag icon on hover."
+        },
+        {
+          "type": "html",
+          "id": "cart_icon_svg",
+          "label": "Custom cart icon SVG",
+          "info": "Paste custom SVG. Leave blank for default bag icon."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Instagram Feed",
+      "blocks": [
+        { "type": "feed_item" },
+        { "type": "feed_item" },
+        { "type": "feed_item" },
+        { "type": "feed_item" },
+        { "type": "feed_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

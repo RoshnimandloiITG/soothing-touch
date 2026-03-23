@@ -1,0 +1,381 @@
+{% comment %}
+  Reviews Slider Section — "Real Skin. Real Results."
+  - Swiper.js (mouse drag + touch swipe)
+  - One slide at a time
+  - Dynamic blocks per review
+  - Color scheme setting
+  - Star color setting only
+{% endcomment %}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+<section
+  class="reviews-section color-{{ section.settings.color_scheme }} gradient"
+  id="reviews-{{ section.id }}"
+  style="--star-color: {{ section.settings.star_color }};"
+>
+  {%- if section.settings.heading != blank -%}
+    <div class="reviews-section__header">
+      <h2 class="reviews-section__title">{{ section.settings.heading }}</h2>
+    </div>
+  {%- endif -%}
+
+  <div class="reviews-section__swiper swiper" id="reviewsSwiper-{{ section.id }}">
+    <div class="swiper-wrapper">
+      {%- for block in section.blocks -%}
+        <div class="swiper-slide reviews-section__slide" {{ block.shopify_attributes }}>
+          {%- comment -%} Stars {%- endcomment -%}
+          {%- assign rating = block.settings.rating | default: 5 -%}
+          <div class="reviews-section__stars" aria-label="{{ rating }} out of 5 stars">
+            {%- for i in (1..5) -%}
+              {%- if i <= rating -%}
+                <span class="reviews-section__star reviews-section__star--filled" aria-hidden="true">★</span>
+              {%- else -%}
+                <span class="reviews-section__star reviews-section__star--empty" aria-hidden="true">★</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- comment -%} Review Text {%- endcomment -%}
+          {%- if block.settings.review_text != blank -%}
+            <p class="reviews-section__text">
+              {{ block.settings.review_text }}
+            </p>
+          {%- endif -%}
+
+          {%- comment -%} Author {%- endcomment -%}
+          {%- if block.settings.author_name != blank -%}
+            <p class="reviews-section__author">{{ block.settings.author_name }}</p>
+          {%- endif -%}
+
+          {%- comment -%} Verified + Product {%- endcomment -%}
+          {%- if block.settings.verified_label != blank or block.settings.product_name != blank -%}
+            <p class="reviews-section__meta">
+              {%- if block.settings.verified_label != blank -%}
+                {{ block.settings.verified_label }}
+              {%- endif -%}
+              {%- if block.settings.product_name != blank -%}
+                {%- if block.settings.verified_label != blank %} – {% endif -%}
+                {{ block.settings.product_name }}
+              {%- endif -%}
+            </p>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        <div class="swiper-slide reviews-section__slide">
+          <div class="reviews-section__empty">Add review blocks to display here.</div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Pagination {%- endcomment -%}
+    <div class="swiper-pagination reviews-section__pagination" id="reviewsPagination-{{ section.id }}"></div>
+  </div>
+</section>
+
+<style>
+/* ── Section Base ── */
+.reviews-section {
+  padding: 70px 20px 80px;
+  overflow: hidden;
+}
+
+.reviews-section__header {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+/* ── Swiper ── */
+#reviews-{{ section.id }} .swiper {
+  max-width: 860px;
+  margin: 0 auto;
+  cursor: grab;
+  user-select: none;
+}
+
+#reviews-{{ section.id }} .swiper:active {
+  cursor: grabbing;
+}
+
+/* ── Slide ── */
+.reviews-section__slide {
+  text-align: center;
+  padding: 10px 40px 50px;
+  box-sizing: border-box;
+}
+
+/* ── Stars ── */
+.reviews-section__stars {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 28px;
+}
+
+.reviews-section__star {
+  font-size: 28px;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.reviews-section__star--filled {
+  color: var(--star-color, #2c1a14);
+}
+
+.reviews-section__star--empty {
+  color: var(--star-color, #2c1a14);
+  opacity: 0.2;
+}
+
+/* ── Review text ── */
+.reviews-section__text {
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.75;
+  margin: 0 0 28px;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+  font-style: normal;
+  opacity: 0.9;
+}
+
+/* ── Author ── */
+.reviews-section__author {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: 0.01em;
+}
+
+/* ── Meta ── */
+.reviews-section__meta {
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.65;
+  letter-spacing: 0.01em;
+}
+
+/* ── Pagination (dashes style) ── */
+#reviews-{{ section.id }} .swiper-pagination {
+  position: static;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 36px;
+}
+
+#reviews-{{ section.id }} .swiper-pagination-bullet {
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.25;
+  transition: opacity 0.25s, width 0.25s;
+  margin: 0 !important;
+}
+
+#reviews-{{ section.id }} .swiper-pagination-bullet-active {
+  opacity: 1;
+  width: 40px;
+}
+
+/* ── Empty ── */
+.reviews-section__empty {
+  color: #aaa;
+  font-size: 14px;
+  padding: 40px 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .reviews-section {
+    padding: 50px 0 60px;
+  }
+  .reviews-section__slide {
+    padding: 10px 24px 50px;
+  }
+  .reviews-section__text {
+    font-size: 15px;
+  }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+<script>
+(function () {
+  function initReviewsSwiper() {
+    const el = document.getElementById('reviewsSwiper-{{ section.id }}');
+    if (!el || el._swiperInit) return;
+    el._swiperInit = true;
+
+    new Swiper('#reviewsSwiper-{{ section.id }}', {
+      slidesPerView: 1,
+      spaceBetween: 0,
+      loop: {{ section.blocks.size | at_least: 2 | at_most: 2 | minus: 1 | append: '' | replace: '1', 'true' | replace: '0', 'false' }},
+      grabCursor: true,
+      mousewheel: false,
+      keyboard: { enabled: true },
+      pagination: {
+        el: '#reviewsPagination-{{ section.id }}',
+        clickable: true,
+      },
+      a11y: {
+        prevSlideMessage: 'Previous review',
+        nextSlideMessage: 'Next review',
+      },
+      autoplay: {% if section.settings.autoplay %}{ delay: {{ section.settings.autoplay_speed | times: 1000 }}, disableOnInteraction: true }{% else %}false{% endif %},
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReviewsSwiper);
+  } else {
+    initReviewsSwiper();
+  }
+
+  /* Shopify theme editor re-init */
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.detail.sectionId === '{{ section.id }}') {
+      const el = document.getElementById('reviewsSwiper-{{ section.id }}');
+      if (el) { el._swiperInit = false; initReviewsSwiper(); }
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Reviews Slider",
+  "tag": "section",
+  "class": "reviews-slider-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Real Skin. Real Results."
+    },
+    {
+      "type": "header",
+      "content": "Color Scheme"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#2c1a14",
+      "info": "Only the stars use a custom color picker. All other colors follow the scheme."
+    },
+    {
+      "type": "header",
+      "content": "Autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "label": "Autoplay speed (seconds)",
+      "default": 5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Star rating",
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review text",
+          "default": "I recently tried the lavender body butter, and I must say it's absolutely divine! The texture is rich and creamy, gliding smoothly onto the skin and absorbing beautifully without any greasy residue."
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author name",
+          "default": "Sarah M."
+        },
+        {
+          "type": "text",
+          "id": "verified_label",
+          "label": "Verified label",
+          "default": "Verified Purchase"
+        },
+        {
+          "type": "text",
+          "id": "product_name",
+          "label": "Product name",
+          "default": "Lavender Dreams Body Butter",
+          "info": "Shown after the verified label with a dash separator."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews Slider",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "I recently tried the lavender body butter, and I must say it's absolutely divine! The texture is rich and creamy, gliding smoothly onto the skin and absorbing beautifully without any greasy residue. After just a few uses, my skin feels incredibly soft, nourished, and deeply moisturized.",
+            "author_name": "Sarah M.",
+            "verified_label": "Verified Purchase",
+            "product_name": "Lavender Dreams Body Butter"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "This is the best skincare product I've ever used. My skin has never looked better and people keep asking what my secret is!",
+            "author_name": "Emily R.",
+            "verified_label": "Verified Purchase",
+            "product_name": "Dead Sea Salt Scrub"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "review_text": "Amazing results after just one week. The scent is beautiful and the formula absorbs so quickly. Will definitely repurchase.",
+            "author_name": "Jessica L.",
+            "verified_label": "Verified Purchase",
+            "product_name": "Rose Hip Face Oil"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,923 @@
+{% comment %}
+  Section: Our Story Split
+  - 3-column layout: text left | floating image center | info card right
+  - Animated sliding image card on scroll (hidden on load, slides up on scroll)
+  - Marquee ticker strip below right card
+  - Fully dynamic via Theme Editor
+{% endcomment %}
+
+{%- liquid
+  assign section_id = 'our-story-split-' | append: section.id
+  assign bg_color = section.settings.bg_color
+  assign card_bg = section.settings.card_bg_color
+  assign card_text_color = section.settings.card_text_color
+  assign ticker_bg = section.settings.ticker_bg_color
+  assign ticker_text_color = section.settings.ticker_text_color
+  assign pt = section.settings.padding_top
+  assign pb = section.settings.padding_bottom
+-%}
+
+<section
+  id="{{ section_id }}"
+  class="our-story-split page-width"
+  style="
+    --oss-bg: {{ bg_color }};
+    --oss-card-bg: {{ card_bg }};
+    --oss-card-text: {{ card_text_color }};
+    --oss-ticker-bg: {{ ticker_bg }};
+    --oss-ticker-text: {{ ticker_text_color }};
+    --oss-btn-bg: {{ section.settings.button_bg_color }};
+    --oss-btn-text: {{ section.settings.button_text_color }};
+    --oss-label-color: {{ section.settings.label_color }};
+    --oss-heading-color: {{ section.settings.heading_color }};
+    --oss-body-color: {{ section.settings.body_color }};
+    --oss-pt: {{ pt }}px;
+    --oss-pb: {{ pb }}px;
+    --oss-gap: {{ section.settings.column_gap }}px;
+  "
+  aria-label="{{ section.settings.section_aria_label | escape }}"
+>
+  <div class="our-story-split__wrapper">
+
+    {%- comment -%} LEFT COLUMN — Story Text {%- endcomment -%}
+    <div class="our-story-split__left">
+      {%- if section.settings.label != blank -%}
+        <p class="our-story-split__label">{{ section.settings.label | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <{{ section.settings.heading_tag }} class="our-story-split__heading">
+          {{ section.settings.heading }}
+        </{{ section.settings.heading_tag }}>
+      {%- endif -%}
+
+      {%- if section.settings.body_text != blank -%}
+        <div class="our-story-split__body rte">{{ section.settings.body_text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.show_left_cta and section.settings.left_cta_label != blank -%}
+        <a href="{{ section.settings.left_cta_url }}" class="our-story-split__left-cta">
+          {{ section.settings.left_cta_label | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} CENTER COLUMN — Floating Image Card {%- endcomment -%}
+    <div class="our-story-split__center">
+      <div class="our-story-split__image-card js-oss-slide">
+        {%- if section.settings.feature_image != blank -%}
+          {{
+            section.settings.feature_image
+            | image_url: width: 700
+            | image_tag:
+              loading: 'lazy',
+              class: 'our-story-split__image',
+              alt: section.settings.feature_image.alt | default: section.settings.heading,
+              widths: '200, 300, 400, 500, 700',
+              sizes: '(max-width: 749px) 80vw, (max-width: 1024px) 35vw, 220px'
+          }}
+        {%- else -%}
+          <div class="our-story-split__image-placeholder">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} RIGHT COLUMN — Info Card + Ticker {%- endcomment -%}
+    <div class="our-story-split__right">
+      <div class="our-story-split__card">
+
+        {%- if section.settings.card_icon != blank -%}
+          <div class="our-story-split__icon">
+            {{
+              section.settings.card_icon
+              | image_url: width: 80
+              | image_tag: loading: 'lazy', alt: '', widths: '40, 60, 80', sizes: '48px'
+            }}
+          </div>
+        {%- elsif section.settings.show_default_icon -%}
+          <div class="our-story-split__icon our-story-split__icon--svg">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M24 4C24 4 14 14 14 24C14 29.52 18.48 34 24 34C29.52 34 34 29.52 34 24C34 14 24 4 24 4Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <path d="M24 34C24 34 16 38 16 44H32C32 38 24 34 24 34Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <circle cx="24" cy="24" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'info_block' -%}
+              <div class="our-story-split__info-block" {{ block.shopify_attributes }}>
+                {%- if block.settings.block_heading != blank -%}
+                  <h3 class="our-story-split__info-heading">{{ block.settings.block_heading | escape }}</h3>
+                {%- endif -%}
+                {%- if block.settings.block_text != blank -%}
+                  <p class="our-story-split__info-text">{{ block.settings.block_text }}</p>
+                {%- endif -%}
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+
+        {%- if section.settings.card_cta_label != blank -%}
+          <a
+            href="{{ section.settings.card_cta_url }}"
+            class="our-story-split__card-btn"
+            {% if section.settings.card_cta_url == blank %}aria-disabled="true"{% endif %}
+          >
+            {{ section.settings.card_cta_label | escape }}
+          </a>
+        {%- endif -%}
+
+      </div>
+
+      {%- if section.settings.ticker_text != blank -%}
+        <div class="our-story-split__ticker" aria-hidden="true">
+          <div class="our-story-split__ticker-track">
+            {%- for i in (1..8) -%}
+              <span class="our-story-split__ticker-item">{{ section.settings.ticker_text | escape }}</span>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ============================================================
+     BASE
+  ============================================================ */
+  #{{ section_id }} {
+    background-color: var(--oss-bg);
+    padding-top: var(--oss-pt);
+    padding-bottom: var(--oss-pb);
+    /* Clip the initial translateY so it doesn't cause a horizontal scrollbar */
+    overflow: hidden;
+  }
+
+  /* ============================================================
+     WRAPPER — CSS Grid for exact column width control
+     Column breakdown at ~1200px content width (24px × 2 gaps = 48px):
+       Left  = 1fr  → fills remaining ≈ 65%
+       Center= 220px → fixed
+       Right = 280px → fixed
+  ============================================================ */
+  .our-story-split__wrapper {
+    display: grid;
+    grid-template-columns: 1fr 220px 280px;
+    gap: var(--oss-gap);
+    align-items: start;
+  }
+
+  /* ============================================================
+     LEFT — takes all remaining space, text unrestricted in width
+  ============================================================ */
+  .our-story-split__left {
+    padding-top: 40px;
+    /* No max-width — text fills the full column */
+  }
+
+  .our-story-split__label {
+    font-size: {{ section.settings.label_font_size }}px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--oss-label-color);
+    margin: 0 0 20px;
+    text-transform: {{ section.settings.label_transform }};
+  }
+
+  .our-story-split__heading {
+    font-size: clamp(2.2rem, 4.5vw, {{ section.settings.heading_font_size }}px);
+    font-style: {{ section.settings.heading_style }};
+    font-weight: {{ section.settings.heading_weight }};
+    line-height: 1.1;
+    color: var(--oss-heading-color);
+    margin: 0 0 28px;
+    letter-spacing: -0.02em;
+  }
+
+  .our-story-split__body {
+    font-size: {{ section.settings.body_font_size }}px;
+    line-height: 1.65;
+    color: var(--oss-body-color);
+    margin: 0;
+    /* No max-width — text uses the full left column */
+  }
+
+  .our-story-split__body p { margin: 0; }
+
+  .our-story-split__left-cta {
+    display: inline-block;
+    margin-top: 28px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--oss-heading-color);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s;
+  }
+  .our-story-split__left-cta:hover { opacity: 0.7; }
+
+  /* ============================================================
+     CENTER — 220px fixed, sticky, image hidden & slides up on scroll
+  ============================================================ */
+  .our-story-split__center {
+    position: sticky;
+    top: 120px;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    z-index: 2;
+  }
+
+  /*
+   * Image starts 120px below its final position with opacity 0.
+   * The IntersectionObserver adds .is-visible which transitions it up.
+   * overflow:hidden on the section prevents the shifted card from
+   * creating a scrollbar.
+   */
+  .our-story-split__image-card {
+    width: 100%;
+    border-radius: {{ section.settings.image_border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    aspect-ratio: {{ section.settings.image_aspect_ratio }};
+    background: #c8a882;
+
+    transform: translateY(120px);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.75s ease;
+    will-change: transform, opacity;
+  }
+
+  .our-story-split__image-card.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .our-story-split__image,
+  .our-story-split__image-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .our-story-split__image-placeholder { background: #d4bba0; }
+  .our-story-split__image-placeholder .placeholder-svg { width: 100%; height: 100%; }
+
+  /* ============================================================
+     RIGHT — 280px fixed, sticky
+  ============================================================ */
+  .our-story-split__right {
+    position: sticky;
+    top: 120px;
+    height: fit-content;
+  }
+
+  .our-story-split__card {
+    background-color: var(--oss-card-bg);
+    color: var(--oss-card-text);
+    border-radius: {{ section.settings.card_border_radius }}px {{ section.settings.card_border_radius }}px 0 0;
+    padding: {{ section.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .our-story-split__icon {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 24px;
+    color: var(--oss-card-text);
+    opacity: 0.9;
+  }
+  .our-story-split__icon img { width: 100%; height: 100%; object-fit: contain; }
+  .our-story-split__icon--svg svg { width: 100%; height: 100%; }
+
+  .our-story-split__info-block + .our-story-split__info-block { margin-top: 28px; }
+
+  .our-story-split__info-heading {
+    font-size: clamp(1rem, 1.6vw, {{ section.settings.card_heading_size }}px);
+    font-weight: 700;
+    color: var(--oss-card-text);
+    margin: 0 0 10px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .our-story-split__info-text {
+    font-size: {{ section.settings.card_body_size }}px;
+    line-height: 1.6;
+    color: var(--oss-card-text);
+    margin: 0;
+    opacity: 0.88;
+  }
+
+  .our-story-split__card-btn {
+    display: inline-block;
+    margin-top: 28px;
+    padding: 14px 28px;
+    background-color: var(--oss-btn-bg);
+    color: var(--oss-btn-text);
+    border-radius: 100px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    align-self: flex-start;
+    transition: transform 0.2s, box-shadow 0.2s;
+    will-change: transform;
+  }
+  .our-story-split__card-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+  .our-story-split__card-btn:active { transform: translateY(0); }
+
+  /* ============================================================
+     TICKER
+  ============================================================ */
+  .our-story-split__ticker {
+    background-color: var(--oss-ticker-bg);
+    overflow: hidden;
+    padding: 14px 0;
+    border-radius: 0 0 {{ section.settings.card_border_radius }}px {{ section.settings.card_border_radius }}px;
+    white-space: nowrap;
+  }
+
+  .our-story-split__ticker-track {
+    display: inline-flex;
+    animation: oss-ticker {{ section.settings.ticker_speed }}s linear infinite;
+  }
+
+  .our-story-split__ticker-item {
+    font-size: {{ section.settings.ticker_font_size }}px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    padding-right: 40px;
+    color: var(--oss-ticker-text);
+    opacity: 0.9;
+    flex-shrink: 0;
+  }
+
+  @keyframes oss-ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  {% if section.settings.ticker_pause_on_hover %}
+  .our-story-split__ticker:hover .our-story-split__ticker-track {
+    animation-play-state: paused;
+  }
+  {% endif %}
+
+  /* ============================================================
+     TABLET (750px – 1024px)
+     2-col grid: left | right  (center drops to full-width row below)
+  ============================================================ */
+  @media screen and (max-width: 1024px) {
+    .our-story-split__wrapper {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    /* left top-left, right top-right */
+    .our-story-split__left {
+      grid-column: 1;
+      grid-row: 1;
+      padding-top: 20px;
+    }
+
+    .our-story-split__right {
+      grid-column: 2;
+      grid-row: 1;
+      position: static;
+    }
+
+    /* center spans both columns below */
+    .our-story-split__center {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      position: static;
+      padding-top: 32px;
+      justify-content: flex-start;
+    }
+
+    .our-story-split__image-card {
+      max-width: 300px;
+    }
+  }
+
+  /* ============================================================
+     MOBILE (<750px)
+     Single column: left → center → right
+  ============================================================ */
+  @media screen and (max-width: 749px) {
+    .our-story-split__wrapper {
+      grid-template-columns: 1fr;
+    }
+
+    .our-story-split__left {
+      grid-column: 1;
+      grid-row: 1;
+      padding-top: 0;
+    }
+
+    .our-story-split__center {
+      grid-column: 1;
+      grid-row: 2;
+      position: static;
+      padding-top: 32px;
+      justify-content: center;
+    }
+
+    .our-story-split__image-card {
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .our-story-split__right {
+      grid-column: 1;
+      grid-row: 3;
+      position: static;
+    }
+
+    .our-story-split__card {
+      border-radius: {{ section.settings.card_border_radius }}px {{ section.settings.card_border_radius }}px 0 0;
+    }
+
+    .our-story-split__ticker {
+      border-radius: 0 0 {{ section.settings.card_border_radius }}px {{ section.settings.card_border_radius }}px;
+    }
+  }
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  function initSlide(sectionEl) {
+    var card = sectionEl ? sectionEl.querySelector('.js-oss-slide') : null;
+    if (!card) return;
+
+    /* Reset class in case of Theme Editor re-init */
+    card.classList.remove('is-visible');
+
+    if (!('IntersectionObserver' in window)) {
+      /* Older browser fallback — just show it */
+      card.classList.add('is-visible');
+      return;
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        /*
+         * rootMargin '-15% 0px' shrinks the intersection root inward by 15% of
+         * the viewport height on top and bottom. This means the card must scroll
+         * at least 15% into the viewport before the animation fires — preventing
+         * it from triggering immediately when the section is near the top of the
+         * page on load.
+         */
+        rootMargin: '-15% 0px',
+        threshold: 0
+      }
+    );
+
+    observer.observe(card);
+  }
+
+  function bootstrap() {
+    var sectionEl = document.getElementById('{{ section_id }}');
+    if (sectionEl) initSlide(sectionEl);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrap);
+  } else {
+    bootstrap();
+  }
+
+  /* Shopify Theme Editor live-reload */
+  document.addEventListener('shopify:section:load', function (e) {
+    var reloaded = e.target.id === '{{ section_id }}'
+      ? e.target
+      : e.target.querySelector('#{{ section_id }}');
+    if (reloaded) initSlide(reloaded);
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Our Story Split",
+  "tag": "section",
+  "class": "section-our-story-split",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout & Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Section Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body text color",
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "header",
+      "content": "Left Column — Story Text"
+    },
+    {
+      "type": "text",
+      "id": "section_aria_label",
+      "label": "Aria label (accessibility)",
+      "default": "Our Story"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label / eyebrow text",
+      "default": "Our Story"
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "label_transform",
+      "label": "Label text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Family-Owned,<br>Rooted in Tradition</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading HTML tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading max font size",
+      "min": 32,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Heading font style",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "italic", "label": "Italic" }
+      ],
+      "default": "italic"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading font weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "<p>Humbly rooted in Ayurveda, we began in 1977 with a vision for natural wellness. Today, we're proudly based in Santa Fe, New Mexico—globally trusted and sustainably crafted for over 50 years.</p>"
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Body font size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "show_left_cta",
+      "label": "Show left column CTA link",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "left_cta_label",
+      "label": "Left CTA label",
+      "default": "Learn more"
+    },
+    {
+      "type": "url",
+      "id": "left_cta_url",
+      "label": "Left CTA URL"
+    },
+    {
+      "type": "header",
+      "content": "Center Column — Feature Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_image",
+      "label": "Feature image"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "3/4", "label": "3:4 Portrait" },
+        { "value": "2/3", "label": "2:3 Portrait" },
+        { "value": "1/1", "label": "1:1 Square" },
+        { "value": "4/3", "label": "4:3 Landscape" }
+      ],
+      "default": "2/3"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image card border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Right Column — Info Card"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background",
+      "default": "#a63c2e"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card text color",
+      "default": "#f5e6d8"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card inner padding",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "image_picker",
+      "id": "card_icon",
+      "label": "Icon image (optional, overrides default)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_default_icon",
+      "label": "Show default leaf icon (if no image set)",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "card_heading_size",
+      "label": "Card heading max size",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "card_body_size",
+      "label": "Card body font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#2d4f45"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "card_cta_label",
+      "label": "Card button label",
+      "default": "Read More"
+    },
+    {
+      "type": "url",
+      "id": "card_cta_url",
+      "label": "Card button URL"
+    },
+    {
+      "type": "header",
+      "content": "Ticker / Marquee Strip"
+    },
+    {
+      "type": "text",
+      "id": "ticker_text",
+      "label": "Ticker text (repeated automatically)",
+      "default": "Since 1977"
+    },
+    {
+      "type": "color",
+      "id": "ticker_bg_color",
+      "label": "Ticker background",
+      "default": "#e8c9a8"
+    },
+    {
+      "type": "color",
+      "id": "ticker_text_color",
+      "label": "Ticker text color",
+      "default": "#a63c2e"
+    },
+    {
+      "type": "range",
+      "id": "ticker_font_size",
+      "label": "Ticker font size",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "ticker_speed",
+      "label": "Ticker speed (lower = faster)",
+      "min": 5,
+      "max": 40,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "ticker_pause_on_hover",
+      "label": "Pause ticker on hover",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_block",
+      "name": "Info block",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "block_heading",
+          "label": "Block heading",
+          "default": "Inspire Wellness Through Ayurvedic Care"
+        },
+        {
+          "type": "textarea",
+          "id": "block_text",
+          "label": "Block body text",
+          "default": "We're here to support mindful living and whole-body balance with products rooted in ancient Ayurvedic wisdom and crafted for modern life."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Our Story Split",
+      "blocks": [
+        {
+          "type": "info_block",
+          "settings": {
+            "block_heading": "Inspire Wellness Through Ayurvedic Care",
+            "block_text": "We're here to support mindful living and whole-body balance with products rooted in ancient Ayurvedic wisdom and crafted for modern life."
+          }
+        },
+        {
+          "type": "info_block",
+          "settings": {
+            "block_heading": "Made for the Mindful",
+            "block_text": "Our customer is intentional, curious, and values quality. They embrace natural wellness that fits seamlessly into their lifestyle—one rooted in clarity, care, and conscious choice."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,886 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "slideshow_gTemeG": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_ac8bHL": {
+          "type": "slide",
+          "settings": {
+            "video": "shopify://files/videos/88069eec58c949e3a2bdbf9c4fcb6040.HD-1080p-4.8Mbps-56726473.mp4",
+            "image_overlay_opacity": 0,
+            "heading": "Image slide",
+            "heading_size": "h1",
+            "subheading": "Tell your brand's story through images",
+            "button_label": "Button label",
+            "link": "#",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "link_2": "",
+            "button_style_secondary2": false,
+            "show_text_box": false,
+            "box_align": "middle-left",
+            "text_alignment": "left",
+            "text_alignment_mobile": "center",
+            "color_scheme": "scheme-5"
+          }
+        },
+        "slide_R3WzHi": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/R5PMHaeeJc8WTo9y0U0Zwd9whnA.png",
+            "image_overlay_opacity": 0,
+            "heading": "Image slide",
+            "heading_size": "h1",
+            "subheading": "Tell your brand's story through images",
+            "button_label": "Button label",
+            "link": "#",
+            "button_style_secondary": false,
+            "button_label_2": "Button label",
+            "link_2": "#",
+            "button_style_secondary2": true,
+            "show_text_box": false,
+            "box_align": "middle-left",
+            "text_alignment": "left",
+            "text_alignment_mobile": "center",
+            "color_scheme": "scheme-5"
+          }
+        }
+      },
+      "block_order": [
+        "slide_ac8bHL",
+        "slide_R3WzHi"
+      ],
+      "name": "t:sections.slideshow.presets.name",
+      "settings": {
+        "layout": "full_bleed",
+        "slide_height": "large",
+        "slider_visual": "dots",
+        "auto_rotate": false,
+        "change_slides_speed": 9,
+        "image_behavior": "none",
+        "show_text_below": true,
+        "accessibility_info": "Slideshow about our brand"
+      }
+    },
+    "category_jU6Md8": {
+      "type": "category",
+      "blocks": {
+        "category_KwjiQY": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/OHjhN0TOCaFsUOfdBEsWObqCYk.avif",
+            "hover_bg_color": "#faad7e",
+            "hover_bg_text": "Massage Cream",
+            "button_label": "Category",
+            "link": "shopify://products/allen-designs-1",
+            "button_style_secondary_2": true
+          }
+        },
+        "category_jATeCL": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/KZo9Zjm1XS7S8Te3hpcMV2B12uo.avif",
+            "hover_bg_color": "#eacbb5",
+            "hover_bg_text": "Lip Balm",
+            "button_label": "Lip Balm",
+            "link": "shopify://products/allen-designs-1",
+            "button_style_secondary_2": true
+          }
+        },
+        "category_FBqiy3": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/ZE6X026O0RI4SkBtFh27zjpySSQ_96d3587e-cb9b-4cfe-8faf-27883fb754d3.avif",
+            "hover_bg_color": "#515283",
+            "hover_bg_text": "Salt Scrub",
+            "button_label": "Salt Scrub",
+            "link": "shopify://products/allen-designs-1",
+            "button_style_secondary_2": true
+          }
+        },
+        "category_zr7hxt": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/EJ0ejTrfWJDuqylPGO4SLc.avif",
+            "hover_bg_color": "#6ebab4",
+            "hover_bg_text": "Massage Gel",
+            "button_label": "Massage Gel",
+            "link": "shopify://products/blooming-asiatic-lilies-in-black-ribbon-tied-vase",
+            "button_style_secondary_2": true
+          }
+        }
+      },
+      "block_order": [
+        "category_KwjiQY",
+        "category_jATeCL",
+        "category_FBqiy3",
+        "category_zr7hxt"
+      ],
+      "name": "Product Category",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "heading_text": "Shop by Category",
+        "heading_size": "h1",
+        "hover_label": "View",
+        "button_label_top": "View All",
+        "link_top": "shopify://collections/discount-zone",
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "enable_mobile_slider": true,
+        "arrow_color": "#000000",
+        "arrow_bg_color": "#ffffff"
+      }
+    },
+    "animated_featured_product_7cNRDM": {
+      "type": "animated-featured-product",
+      "name": "Trending Products Split",
+      "settings": {}
+    },
+    "section_collection_tabs_YHYHXe": {
+      "type": "section-collection-tabs",
+      "blocks": {
+        "collection_tab_BpMTfc": {
+          "type": "collection_tab",
+          "settings": {
+            "collection": "men-wigs",
+            "tab_label": "",
+            "heading_size": "h1",
+            "color_scheme_2": "",
+            "products_limit": 4,
+            "show_view_all": true,
+            "view_all_text": "View All",
+            "show_stars": true,
+            "star_count": 5,
+            "star_value": "5.0"
+          }
+        },
+        "collection_tab_3AwD6n": {
+          "type": "collection_tab",
+          "settings": {
+            "collection": "new-arrivals",
+            "tab_label": "",
+            "heading_size": "h1",
+            "color_scheme_2": "",
+            "products_limit": 4,
+            "show_view_all": true,
+            "view_all_text": "View All",
+            "show_stars": true,
+            "star_count": 5,
+            "star_value": "5.0"
+          }
+        }
+      },
+      "block_order": [
+        "collection_tab_BpMTfc",
+        "collection_tab_3AwD6n"
+      ],
+      "name": "Collection Tabs",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "heading": "Customer Favourites",
+        "card_style": "card",
+        "show_badge": true,
+        "badge_type": "auto",
+        "badge_text": "SALE",
+        "badge_bg_color": "#f5a88d",
+        "badge_text_color": "#ffffff",
+        "show_cart_btn": true,
+        "cart_btn_style": "icon",
+        "cart_icon_svg": "",
+        "cart_btn_bg": "#7b2d2d",
+        "cart_btn_color": "#ffffff",
+        "cart_btn_size": 40,
+        "cart_btn_radius": 50,
+        "section_bg": "#fdf6f2",
+        "card_bg": "#ffffff",
+        "card_text_color": "#2a1a1a",
+        "star_color": "#341512",
+        "tab_active_bg": "#7b2d2d",
+        "tab_active_text": "#ffffff",
+        "tab_border_color": "#cccccc",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "marquee_banner_RRMBXT": {
+      "type": "marquee-banner",
+      "name": "Image Banner — Marquee",
+      "settings": {
+        "banner_type": "marquee_banner",
+        "sticky_banner": false,
+        "side_fade": true,
+        "fade_width": 4,
+        "overlay_opacity": 45,
+        "color_scheme": "scheme-1",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mq_banner_height": 700,
+        "mq_media_type": "image",
+        "mq_image": "shopify://shop_images/wN8TEFqeCGzO38rEvtBsBeP47sQ.png",
+        "mq_video": "",
+        "media_position": "center",
+        "mq_heading": "Glow. Nourish. Repeat.",
+        "text_position": "flex-end",
+        "marquee_width": "full",
+        "marquee_speed": 60,
+        "mq_text": "",
+        "mq_btn_label": "button",
+        "mq_btn_link": "",
+        "two_banner_height": 640,
+        "two_flex_dir": "horizontal",
+        "panel1_media_type": "image",
+        "panel1_video": "",
+        "panel1_media_pos": "top",
+        "panel1_content_dir": "horizontal",
+        "panel1_heading": "",
+        "panel1_text": "",
+        "panel1_btn_label": "",
+        "panel1_btn_link": "",
+        "panel1_content_pos": "middle-left",
+        "panel2_media_type": "image",
+        "panel2_video": "",
+        "panel2_media_pos": "center",
+        "panel2_content_dir": "horizontal",
+        "panel2_heading": "",
+        "panel2_text": "",
+        "panel2_btn_label": "",
+        "panel2_btn_link": "",
+        "panel2_content_pos": "bottom-center"
+      }
+    },
+    "marquee_banner_8eAD96": {
+      "type": "marquee-banner",
+      "name": "Image Banner — Marquee",
+      "settings": {
+        "banner_type": "two_image_banner",
+        "sticky_banner": false,
+        "side_fade": false,
+        "fade_width": 12,
+        "overlay_opacity": 25,
+        "color_scheme": "scheme-1",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mq_banner_height": 560,
+        "mq_media_type": "image",
+        "mq_video": "",
+        "media_position": "center",
+        "mq_heading": "Glow. Nourish. Repeat.",
+        "text_position": "center",
+        "marquee_width": "full",
+        "marquee_speed": 18,
+        "mq_text": "",
+        "mq_btn_label": "",
+        "mq_btn_link": "",
+        "two_banner_height": 640,
+        "two_flex_dir": "horizontal",
+        "panel1_media_type": "image",
+        "panel1_image": "shopify://shop_images/wN8TEFqeCGzO38rEvtBsBeP47sQ.png",
+        "panel1_video": "",
+        "panel1_media_pos": "top",
+        "panel1_content_dir": "horizontal",
+        "panel1_heading": "jjnasfszdv",
+        "panel1_text": "",
+        "panel1_btn_label": "button",
+        "panel1_btn_link": "",
+        "panel1_content_pos": "top-left",
+        "panel2_media_type": "image",
+        "panel2_image": "shopify://shop_images/R5PMHaeeJc8WTo9y0U0Zwd9whnA.png",
+        "panel2_video": "",
+        "panel2_media_pos": "center",
+        "panel2_content_dir": "vertical",
+        "panel2_heading": "fadf",
+        "panel2_text": "",
+        "panel2_btn_label": "button",
+        "panel2_btn_link": "",
+        "panel2_content_pos": "top-left"
+      }
+    },
+    "multicolumn_6E63G9": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_hyepka": {
+          "type": "column",
+          "settings": {
+            "icon_type": "svg",
+            "svg_code": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); color: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); flex-shrink: 0;\"><g color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" weight=\"regular\"><path d=\"M223.45,40.07a8,8,0,0,0-7.52-7.52C139.8,28.08,78.82,51,52.82,94a87.09,87.09,0,0,0-12.76,49c.57,15.92,5.21,32,13.79,47.85l-19.51,19.5a8,8,0,0,0,11.32,11.32l19.5-19.51C81,210.73,97.09,215.37,113,215.94q1.67.06,3.33.06A86.93,86.93,0,0,0,162,203.18C205,177.18,227.93,116.21,223.45,40.07ZM153.75,189.5c-22.75,13.78-49.68,14-76.71.77l88.63-88.62a8,8,0,0,0-11.32-11.32L65.73,179c-13.19-27-13-54,.77-76.71,22.09-36.47,74.6-56.44,141.31-54.06C210.2,114.89,190.22,167.41,153.75,189.5Z\"></path></g></svg>",
+            "title": "<strong>Vegan & Cruelty-Free</strong>",
+            "text": "<p>100% Vegan. Absolutely Cruelty-Free.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_d9Yz6K": {
+          "type": "column",
+          "settings": {
+            "icon_type": "svg",
+            "svg_code": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); color: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); flex-shrink: 0;\"><g color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" weight=\"regular\"><path d=\"M237.66,86.34l-60-60a8,8,0,0,0-11.32,0L37.11,155.57a44.77,44.77,0,0,0,63.32,63.32L212.32,107l22.21-7.4a8,8,0,0,0,3.13-13.25ZM89.11,207.57a28.77,28.77,0,0,1-40.68-40.68l28.8-28.8c8.47-2.9,21.75-4,39.07,5,10.6,5.54,20.18,8,28.56,8.73ZM205.47,92.41a8,8,0,0,0-3.13,1.93l-39.57,39.57c-8.47,2.9-21.75,4-39.07-5-10.6-5.54-20.18-8-28.56-8.73L172,43.31,217.19,88.5Z\"></path></g></svg>",
+            "title": "<strong>Made in USA</strong>",
+            "text": "<p>Crafted with Care in the USA</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_mFznD8": {
+          "type": "column",
+          "settings": {
+            "icon_type": "svg",
+            "svg_code": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); color: var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255)); flex-shrink: 0;\"><g color=\"var(--token-6c510ae1-7654-486d-9239-3be193299ea9, rgb(255, 255, 255))\" weight=\"regular\"><path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z\"></path></g></svg>",
+            "title": "<strong>Fast Shipping, Fresh Glow</strong>",
+            "text": "<p>start your skincare without delay.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_hyepka",
+        "column_d9Yz6K",
+        "column_mFznD8"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "",
+        "heading_alignment": "center",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "icon_size": 30,
+        "icon_color_override": true,
+        "icon_color": "#ffffff",
+        "icon_fill_mode": "fill",
+        "icon_bg_enabled": false,
+        "icon_bg_color": "#f2e8e3",
+        "icon_bg_size": 64,
+        "icon_bg_radius": 50,
+        "heading_font_weight": "700",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 3,
+        "column_alignment": "center",
+        "background_style": "none",
+        "card_border_enabled": false,
+        "card_border_color": "#e0d5cf",
+        "card_border_width": 1,
+        "card_border_radius": 12,
+        "divider_enabled": true,
+        "divider_color": "#d4c5be",
+        "divider_width": 1,
+        "color_scheme": "scheme-5",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "insta_feed_cPrDbU": {
+      "type": "insta-feed",
+      "blocks": {
+        "feed_item_nkDWUe": {
+          "type": "feed_item",
+          "settings": {
+            "media_type": "video",
+            "video": "https://framerusercontent.com/assets/HrnVaQO6hIGZGZNe4AEK1ArZKI.mp4",
+            "hover_product_name": "",
+            "hover_price": "",
+            "hover_text": "",
+            "cart_product": "",
+            "cart_icon_svg": ""
+          }
+        },
+        "feed_item_kKm9gg": {
+          "type": "feed_item",
+          "settings": {
+            "media_type": "image",
+            "video": "https://framerusercontent.com/assets/RO7Mm7fLCMQBK0NsNAFDSU06wQo.mp4",
+            "hover_product_name": "",
+            "hover_price": "",
+            "hover_text": "",
+            "cart_product": "",
+            "cart_icon_svg": ""
+          }
+        },
+        "feed_item_wYm9Nb": {
+          "type": "feed_item",
+          "settings": {
+            "media_type": "image",
+            "video": "",
+            "hover_product_name": "",
+            "hover_price": "",
+            "hover_text": "",
+            "cart_product": "",
+            "cart_icon_svg": ""
+          }
+        },
+        "feed_item_kVQgnY": {
+          "type": "feed_item",
+          "settings": {
+            "media_type": "image",
+            "video": "",
+            "hover_product_name": "",
+            "hover_price": "",
+            "hover_text": "",
+            "cart_product": "",
+            "cart_icon_svg": ""
+          }
+        },
+        "feed_item_iVXcMj": {
+          "type": "feed_item",
+          "settings": {
+            "media_type": "image",
+            "video": "",
+            "hover_product_name": "",
+            "hover_price": "",
+            "hover_text": "",
+            "cart_product": "",
+            "cart_icon_svg": ""
+          }
+        }
+      },
+      "block_order": [
+        "feed_item_nkDWUe",
+        "feed_item_kKm9gg",
+        "feed_item_wYm9Nb",
+        "feed_item_kVQgnY",
+        "feed_item_iVXcMj"
+      ],
+      "name": "Instagram Feed",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "color_scheme_2": "scheme-2",
+        "heading": "Follow the Glow",
+        "subheading": "See how our customers are embracing self-care with Soothing Touch",
+        "heading_alignment": "center",
+        "show_instagram_handle": true,
+        "instagram_handle": "@soothingtouchproducts",
+        "instagram_icon_svg": "",
+        "cart_icon_color": "#000000",
+        "cart_icon_bg": "#ffffff",
+        "show_follow_button": true,
+        "follow_button_text": "Follow Us",
+        "button_type": "button--secondary",
+        "max_width": 1400,
+        "grid_gap": 10,
+        "grid_padding": 24,
+        "border_radius": 12,
+        "section_padding_top": 60,
+        "section_padding_bottom": 60,
+        "mobile_layout": "slider"
+      }
+    },
+    "our_story_split_9C8cN3": {
+      "type": "our-story-split",
+      "blocks": {
+        "info_block_nQ3zNp": {
+          "type": "info_block",
+          "settings": {
+            "block_heading": "Inspire Wellness Through Ayurvedic Care",
+            "block_text": "We're here to support mindful living and whole-body balance with products rooted in ancient Ayurvedic wisdom and crafted for modern life."
+          }
+        },
+        "info_block_mgQQJN": {
+          "type": "info_block",
+          "settings": {
+            "block_heading": "Made for the Mindful",
+            "block_text": "Our customer is intentional, curious, and values quality. They embrace natural wellness that fits seamlessly into their lifestyle—one rooted in clarity, care, and conscious choice."
+          }
+        }
+      },
+      "block_order": [
+        "info_block_nQ3zNp",
+        "info_block_mgQQJN"
+      ],
+      "name": "Our Story Split",
+      "settings": {
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "column_gap": 24,
+        "bg_color": "#ffffff",
+        "label_color": "#1a1a1a",
+        "heading_color": "#1a1a1a",
+        "body_color": "#3a3a3a",
+        "section_aria_label": "Our Story",
+        "label": "Our Story",
+        "label_font_size": 13,
+        "label_transform": "none",
+        "heading": "<p>Family-Owned,<br>Rooted in Tradition</p>",
+        "heading_tag": "h2",
+        "heading_font_size": 72,
+        "heading_style": "italic",
+        "heading_weight": "400",
+        "body_text": "<p>Humbly rooted in Ayurveda, we began in 1977 with a vision for natural wellness. Today, we're proudly based in Santa Fe, New Mexico—globally trusted and sustainably crafted for over 50 years.</p>",
+        "body_font_size": 16,
+        "show_left_cta": false,
+        "left_cta_label": "Learn more",
+        "left_cta_url": "",
+        "image_aspect_ratio": "2/3",
+        "image_border_radius": 20,
+        "card_bg_color": "#a63c2e",
+        "card_text_color": "#f5e6d8",
+        "card_border_radius": 20,
+        "card_padding": 40,
+        "show_default_icon": true,
+        "card_heading_size": 22,
+        "card_body_size": 15,
+        "button_bg_color": "#2d4f45",
+        "button_text_color": "#ffffff",
+        "card_cta_label": "Read More",
+        "card_cta_url": "",
+        "ticker_text": "Since 1977",
+        "ticker_bg_color": "#e8c9a8",
+        "ticker_text_color": "#a63c2e",
+        "ticker_font_size": 22,
+        "ticker_speed": 14,
+        "ticker_pause_on_hover": true
+      }
+    },
+    "shop_the_look_xbdQAq": {
+      "type": "shop-the-look",
+      "blocks": {
+        "hotspot_bfEeC7": {
+          "type": "hotspot",
+          "settings": {
+            "pos_x": 54,
+            "pos_y": 84,
+            "product": "adore-mono-part-lace-front-mono-part-synthetic-wig-copy",
+            "sale_badge": "",
+            "star_count": 5,
+            "rating_text": "5.0"
+          }
+        },
+        "hotspot_GXyji8": {
+          "type": "hotspot",
+          "settings": {
+            "pos_x": 65,
+            "pos_y": 88,
+            "product": "crescent-of-blue-dreams",
+            "sale_badge": "",
+            "star_count": 5,
+            "rating_text": "5.0"
+          }
+        },
+        "hotspot_E7LgHb": {
+          "type": "hotspot",
+          "settings": {
+            "pos_x": 75,
+            "pos_y": 80,
+            "product": "fragrance-beyond-time-crafting-memories-in-a-bottle",
+            "sale_badge": "",
+            "star_count": 5,
+            "rating_text": "5.0"
+          }
+        },
+        "hotspot_jgm9WP": {
+          "type": "hotspot",
+          "settings": {
+            "pos_x": 80,
+            "pos_y": 88,
+            "product": "lemon-by-ellen-wille-heat",
+            "sale_badge": "",
+            "star_count": 5,
+            "rating_text": "5.0"
+          }
+        }
+      },
+      "block_order": [
+        "hotspot_bfEeC7",
+        "hotspot_GXyji8",
+        "hotspot_E7LgHb",
+        "hotspot_jgm9WP"
+      ],
+      "name": "Shop the Look",
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "image": "shopify://shop_images/Dk108LxCC4LSs3Fb8uWIaoMVdg.webp",
+        "canvas_ratio": "16/9",
+        "canvas_max_width": 1200,
+        "border_radius": 10,
+        "panel_position": "left",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "review_section_jrqdTK": {
+      "type": "review-section",
+      "blocks": {
+        "review_8gPtD4": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "I recently tried the lavender body butter, and I must say it's absolutely divine! The texture is rich and creamy, gliding smoothly onto the skin and absorbing beautifully without any greasy residue. After just a few uses, my skin feels incredibly soft, nourished, and deeply moisturized.",
+            "author_name": "Sarah M.",
+            "verified_label": "Verified Purchase",
+            "product_name": "Lavender Dreams Body Butter"
+          }
+        },
+        "review_c6QCfH": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "This is the best skincare product I've ever used. My skin has never looked better and people keep asking what my secret is!",
+            "author_name": "Emily R.",
+            "verified_label": "Verified Purchase",
+            "product_name": "Dead Sea Salt Scrub"
+          }
+        },
+        "review_R87R3W": {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "review_text": "Amazing results after just one week. The scent is beautiful and the formula absorbs so quickly. Will definitely repurchase.",
+            "author_name": "Jessica L.",
+            "verified_label": "Verified Purchase",
+            "product_name": "Rose Hip Face Oil"
+          }
+        }
+      },
+      "block_order": [
+        "review_8gPtD4",
+        "review_c6QCfH",
+        "review_R87R3W"
+      ],
+      "name": "Reviews Slider",
+      "settings": {
+        "heading": "Real Skin. Real Results.",
+        "color_scheme": "scheme-2",
+        "star_color": "#2c1a14",
+        "autoplay": true,
+        "autoplay_speed": 7
+      }
+    },
+    "collapsible_content_DFAjyQ": {
+      "type": "collapsible-content",
+      "blocks": {
+        "collapsible_row_MDeQWT": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Collapsible row",
+            "icon": "none",
+            "row_content": "",
+            "page": ""
+          }
+        },
+        "collapsible_row_3peFfX": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Collapsible row",
+            "icon": "none",
+            "row_content": "",
+            "page": ""
+          }
+        },
+        "collapsible_row_mkWpxT": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Collapsible row",
+            "icon": "none",
+            "row_content": "",
+            "page": ""
+          }
+        },
+        "collapsible_row_ym4hY8": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Collapsible row",
+            "icon": "none",
+            "row_content": "",
+            "page": ""
+          }
+        }
+      },
+      "block_order": [
+        "collapsible_row_MDeQWT",
+        "collapsible_row_3peFfX",
+        "collapsible_row_mkWpxT",
+        "collapsible_row_ym4hY8"
+      ],
+      "name": "t:sections.collapsible_content.presets.name",
+      "settings": {
+        "caption": "",
+        "heading": "Frequently Asked Questions",
+        "heading_size": "h0",
+        "heading_font_size": 36,
+        "heading_font_weight": "800",
+        "heading_alignment": "center",
+        "subtext": "Have questions about our products or ordering? Find answers to the most common questions below.",
+        "header_margin_bottom": 48,
+        "divider_color": "#e0d5cf",
+        "divider_width": 1,
+        "divider_full_width": true,
+        "row_padding_v": 20,
+        "row_padding_h": 8,
+        "row_border_radius": 0,
+        "row_title_size": 16,
+        "row_title_weight": "700",
+        "hover_bg": "#b34840",
+        "hover_text_color": "#ffffff",
+        "hover_icon_bg": "#ffffff",
+        "hover_icon_color": "#b34840",
+        "open_bg": "#b34840",
+        "open_text_color": "#ffffff",
+        "open_icon_bg": "#ffffff",
+        "open_icon_color": "#b34840",
+        "toggle_style": "plus",
+        "icon_size": 32,
+        "icon_bg_enabled": true,
+        "icon_bg_color": "#b34840",
+        "icon_color": "#ffffff",
+        "layout": "none",
+        "container_color_scheme": "",
+        "color_scheme": "scheme-2",
+        "open_first_collapsible_row": false,
+        "image_ratio": "adapt",
+        "desktop_layout": "image_second",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "blog_post_cQQ8K4": {
+      "type": "blog-post",
+      "name": "Blog Posts",
+      "settings": {
+        "heading": "The Soothing Journal",
+        "subheading": "",
+        "heading_align": "center",
+        "heading_size": 40,
+        "heading_weight": "700",
+        "header_gap": 36,
+        "blog": "health-article-1",
+        "post_count": 3,
+        "show_author": true,
+        "author_prefix": "By",
+        "show_date": true,
+        "date_format": "%b %-d, %Y",
+        "excerpt_length": 100,
+        "image_ratio": "3/4",
+        "card_radius": 14,
+        "text_inset": 10,
+        "title_size": 18,
+        "title_weight": "700",
+        "columns_desktop": 3,
+        "columns_tablet": "2",
+        "mobile_layout": "slider",
+        "gap": 20,
+        "show_view_all": false,
+        "view_all_label": "View All Posts",
+        "color_scheme": "scheme-1",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "side_padding": 24
+      }
+    },
+    "multicolumn_Wbe4rm": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_f83tAH": {
+          "type": "column",
+          "settings": {
+            "icon_type": "svg",
+            "svg_code": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12)); color: var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12)); flex-shrink: 0;\"><g color=\"var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12))\" weight=\"light\"><path d=\"M208,42H48A14,14,0,0,0,34,56v56c0,51.94,25.12,83.4,46.2,100.64,22.73,18.6,45.27,24.89,46.22,25.15a6,6,0,0,0,3.16,0c.95-.26,23.49-6.55,46.22-25.15C196.88,195.4,222,163.94,222,112V56A14,14,0,0,0,208,42Zm2,70c0,37.76-13.94,68.39-41.44,91.06A131.17,131.17,0,0,1,128,225.72a130.94,130.94,0,0,1-40.56-22.66C59.94,180.39,46,149.76,46,112V56a2,2,0,0,1,2-2H208a2,2,0,0,1,2,2Z\"></path></g></svg>",
+            "title": "<strong>30-Day Money Back</strong>",
+            "text": "<p>Not completely satisfied? Return any unopened products for a full refund within 30 days.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_ddw3tr": {
+          "type": "column",
+          "settings": {
+            "icon_type": "svg",
+            "svg_code": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12)); color: var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12)); flex-shrink: 0;\"><g color=\"var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12))\" weight=\"light\"><path d=\"M214,96A86,86,0,1,0,74,162.87V240a6,6,0,0,0,2.85,5.1A5.93,5.93,0,0,0,80,246a6,6,0,0,0,2.68-.63L128,222.71l45.33,22.66A6,6,0,0,0,182,240V162.87A85.87,85.87,0,0,0,214,96ZM54,96a74,74,0,1,1,74,74A74.09,74.09,0,0,1,54,96ZM170,230.29l-39.33-19.66a6,6,0,0,0-5.36,0L86,230.29V171a85.75,85.75,0,0,0,84,0ZM128,150A54,54,0,1,0,74,96,54.06,54.06,0,0,0,128,150Zm0-96A42,42,0,1,1,86,96,42,42,0,0,1,128,54Z\"></path></g></svg>",
+            "title": "Certified Organic",
+            "text": "<p>All our ingredients are certified organic and ethically sourced from sustainable farms.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_Fzbq6n": {
+          "type": "column",
+          "settings": {
+            "icon_type": "svg",
+            "svg_code": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12)); color: var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12)); flex-shrink: 0;\"><g color=\"var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12))\" weight=\"light\"><path d=\"M172.24,99.76a6,6,0,0,1,0,8.48l-56,56a6,6,0,0,1-8.48,0l-24-24a6,6,0,0,1,8.48-8.48L112,151.51l51.76-51.75A6,6,0,0,1,172.24,99.76ZM230,128A102,102,0,1,1,128,26,102.12,102.12,0,0,1,230,128Zm-12,0a90,90,0,1,0-90,90A90.1,90.1,0,0,0,218,128Z\"></path></g></svg>",
+            "title": "Dermatologist Tested",
+            "text": "<p>Every formula is tested by certified dermatologists to ensure safety for all skin types.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_kctB96": {
+          "type": "column",
+          "settings": {
+            "icon_type": "svg",
+            "svg_code": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 256 256\" focusable=\"false\" color=\"var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12))\" style=\"user-select: none; width: 100%; height: 100%; display: inline-block; fill: var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12)); color: var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12)); flex-shrink: 0;\"><g color=\"var(--token-d1ef1660-ffac-4433-8943-6c5d2aec568d, rgb(37, 17, 12))\" weight=\"light\"><path d=\"M26,128A70.08,70.08,0,0,1,96,58H209.51L195.76,44.24a6,6,0,0,1,8.48-8.48l24,24a6,6,0,0,1,0,8.48l-24,24a6,6,0,0,1-8.48-8.48L209.51,70H96a58.07,58.07,0,0,0-58,58,6,6,0,0,1-12,0Zm198-6a6,6,0,0,0-6,6,58.07,58.07,0,0,1-58,58H46.49l13.75-13.76a6,6,0,0,0-8.48-8.48l-24,24a6,6,0,0,0,0,8.48l24,24a6,6,0,0,0,8.48-8.48L46.49,198H160a70.08,70.08,0,0,0,70-70A6,6,0,0,0,224,122Z\"></path></g></svg>",
+            "title": "Free Returns",
+            "text": "<p>Easy, hassle-free returns with prepaid shipping labels. No questions asked.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_f83tAH",
+        "column_ddw3tr",
+        "column_Fzbq6n",
+        "column_kctB96"
+      ],
+      "name": "Multicolumn",
+      "settings": {
+        "title": "Your Trust, Our Promise",
+        "heading_alignment": "center",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "icon_size": 32,
+        "icon_color_override": true,
+        "icon_color": "#2c1a14",
+        "icon_fill_mode": "stroke",
+        "icon_bg_enabled": false,
+        "icon_bg_color": "#f2e8e3",
+        "icon_bg_size": 64,
+        "icon_bg_radius": 50,
+        "heading_font_weight": "700",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "primary",
+        "card_border_enabled": true,
+        "card_border_color": "#e0d5cf",
+        "card_border_width": 1,
+        "card_border_radius": 12,
+        "divider_enabled": false,
+        "divider_color": "#d4c5be",
+        "divider_width": 1,
+        "color_scheme": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "slideshow_gTemeG",
+    "category_jU6Md8",
+    "animated_featured_product_7cNRDM",
+    "section_collection_tabs_YHYHXe",
+    "marquee_banner_RRMBXT",
+    "marquee_banner_8eAD96",
+    "multicolumn_6E63G9",
+    "insta_feed_cPrDbU",
+    "our_story_split_9C8cN3",
+    "shop_the_look_xbdQAq",
+    "review_section_jrqdTK",
+    "collapsible_content_DFAjyQ",
+    "blog_post_cQQ8K4",
+    "multicolumn_Wbe4rm"
+  ]
+}
